@@ -3,13 +3,13 @@ package me.river.royaltisapi.core.data;
 import java.util.List;
 
 public class LootBox {
-    private double id;
-    private double mysqlID;
+    private int id;
+    private int mysqlID;
     private String type;
     private Coordinates coords;
     private List<Item> items;
 
-    public LootBox(double id, String type, Coordinates coords, List<Item> items) {
+    public LootBox(int id, String type, Coordinates coords, List<Item> items) {
         this.id = id;
         this.type = type;
         this.coords = coords;
@@ -32,11 +32,11 @@ public class LootBox {
         return items;
     }
 
-    public void setMysqlID(double mysqlID) {
+    public void setMysqlID(int mysqlID) {
         this.mysqlID = mysqlID;
     }
 
-    public double getMysqlID() {
+    public int getMysqlID() {
         return mysqlID;
     }
 

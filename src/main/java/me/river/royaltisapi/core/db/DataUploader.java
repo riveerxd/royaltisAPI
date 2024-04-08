@@ -3,41 +3,48 @@ package me.river.royaltisapi.core.db;
 import me.river.royaltisapi.core.data.Border;
 import me.river.royaltisapi.core.data.GameData;
 import me.river.royaltisapi.core.data.LootBox;
+import me.river.royaltisapi.core.data.json.JsonParser;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DataUploader {
     private Connection connection;
     private GameData gameData;
 
-    public boolean uploadGameData(GameData gameData) throws RuntimeException {
+    private static final String INSERT_BORDERS_SQL = "INSERT INTO Borders (game_id, type, coords_latitude, coords_longitude) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_LOOTBOXES_SQL = "INSERT INTO LootBoxes (game_id, type, coords_latitude, coords_longitude) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_LOOTBOX_ITEMS_SQL = "INSERT INTO LootBoxItems (lootbox_id, name) VALUES (?, ?)";
+
+
+    public Integer uploadGameData(GameData gameData) throws RuntimeException {
         try {
             this.connection = DBConnector.getConnection();
             this.gameData = gameData;
-            boolean gameUploaded = uploadGame(this.gameData.getGameName());
-            if (gameUploaded){
+            Integer gameUploaded = uploadGame(this.gameData.getGameName());
+            if (gameUploaded != null){
                 uploadBorders();
                 uploadLootboxes();
                 uploadLootboxItems();
                 connection.close();
-                return true;
+                return gameUploaded;
             }else{
-                return false;
+                return null;
             }
 
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
-    private boolean uploadGame(String gameName) throws SQLException {
+    private int uploadGame(String gameName) throws SQLException {
         String sql = "INSERT INTO Games (name) VALUES (?)";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, gameName);
-        int rowsAffected = statement.executeUpdate();
 
+        Integer gameId = null;
         ResultSet generatedKeys = statement.getGeneratedKeys();
         if (generatedKeys.next()) {
-            int gameId = generatedKeys.getInt(1);
+            gameId = generatedKeys.getInt(1);
             this.gameData.setGameID(gameId);
         } else {
             throw new SQLException("Failed to retrieve generated game ID");
@@ -45,73 +52,66 @@ public class DataUploader {
 
         statement.close();
         generatedKeys.close();
-        return rowsAffected > 0;
+        return gameId;
     }
 
 
     private void uploadBorders() throws RuntimeException {
-        try {
-            for (Border curr : gameData.getBorders()) {
-                String sql = "INSERT INTO Borders (game_id, type, coords_latitude, coords_longitude) VALUES (?, ?, ?, ?)";
-                PreparedStatement statement = connection.prepareStatement(sql);
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_BORDERS_SQL)) {
+            ArrayList<Border> borders = gameData.getBorders();
+            for (Border curr : borders) {
                 statement.setInt(1, gameData.getGameID());
                 statement.setString(2, curr.getType());
                 statement.setDouble(3, curr.getCoords().getLatitude());
                 statement.setDouble(4, curr.getCoords().getLongitude());
-                statement.executeUpdate();
-                statement.close();
+                statement.addBatch();
             }
-        }catch (SQLException e){
-            throw new RuntimeException("SQL failed to upload borders: "+e.getMessage());
-        }catch (Exception e){
-            throw new RuntimeException("Failed to upload borders: "+e.getMessage());
+            statement.executeBatch();
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL failed to upload borders: " + e.getMessage());
         }
     }
 
     private void uploadLootboxes() throws RuntimeException {
-        try {
-            for (LootBox curr : gameData.getLootboxes()) {
-                String sql = "INSERT INTO LootBoxes (game_id, type, coords_latitude, coords_longitude) VALUES (?, ?, ?, ?)";
-                PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_LOOTBOXES_SQL, Statement.RETURN_GENERATED_KEYS)) {
+            ArrayList<LootBox> lootboxes = gameData.getLootboxes();
+            for (LootBox curr : lootboxes) {
                 statement.setInt(1, gameData.getGameID());
                 statement.setString(2, curr.getType());
                 statement.setDouble(3, curr.getCoords().getLatitude());
                 statement.setDouble(4, curr.getCoords().getLongitude());
-                statement.executeUpdate();
+                statement.addBatch();
+            }
+            statement.executeBatch();
 
-                ResultSet generatedKeys = statement.getGeneratedKeys();
+            //Retrieve generated keys for lootboxes
+            var generatedKeys = statement.getGeneratedKeys();
+            for (int i = 0; i < lootboxes.size(); i++) {
                 if (generatedKeys.next()) {
                     int lootboxId = generatedKeys.getInt(1);
-                    curr.setMysqlID(lootboxId);
+                    lootboxes.get(i).setMysqlID(lootboxId);
                 } else {
-                    throw new SQLException("Failed to retrieve generated lootbox mysql ID");
+                    throw new SQLException("Failed to retrieve generated lootbox ID for index: " + i);
                 }
-                statement.close();
-                generatedKeys.close();
             }
         } catch (SQLException e) {
             throw new RuntimeException("SQL failed to upload lootboxes: " + e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload lootboxes: " + e.getMessage());
         }
     }
 
     private void uploadLootboxItems() throws RuntimeException {
-        try {
-            for (LootBox currLootbox : gameData.getLootboxes()) {
+        try (PreparedStatement statement = connection.prepareStatement(INSERT_LOOTBOX_ITEMS_SQL)) {
+            ArrayList<LootBox> lootboxes = gameData.getLootboxes();
+            for (LootBox currLootbox : lootboxes) {
                 for (LootBox.Item currItem : currLootbox.getItems()) {
-                    String sql = "INSERT INTO LootBoxItems (lootbox_id, name) VALUES (?, ?)";
-                    PreparedStatement statement = connection.prepareStatement(sql);
-                    statement.setInt(1, (int)currLootbox.getMysqlID());
+                    statement.setInt(1, currLootbox.getMysqlID());
                     statement.setString(2, currItem.getName());
-                    statement.executeUpdate();
-                    statement.close();
+                    statement.addBatch();
                 }
             }
+            statement.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException("SQL failed to upload lootbox items: " + e.getMessage());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload lootbox items: " + e.getMessage());
         }
     }
 }

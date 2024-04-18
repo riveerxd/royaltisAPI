@@ -14,6 +14,12 @@ public class GameData {
         this.gameName = gameName;
     }
 
+    public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes) {
+        this.borders = borders;
+        this.lootboxes = lootboxes;
+        this.gameName = "not set";
+    }
+
     public void setGameID(int gameID) {
         this.gameID = gameID;
     }
@@ -32,5 +38,15 @@ public class GameData {
 
     public int getGameID() {
         return gameID;
+    }
+
+    @Override
+    public String toString() {
+        return "GameData{" +
+                "borders=" + borders +
+                ", lootboxes=" + lootboxes +
+                ", gameName='" + gameName + '\'' +
+                ", gameID=" + gameID +
+                '}';
     }
 }

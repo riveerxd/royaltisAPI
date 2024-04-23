@@ -7,6 +7,7 @@ public class GameData {
     private ArrayList<LootBox> lootboxes;
     private String gameName;
     private int gameID;
+    private MiddlePoint middlePoint;
 
     public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, String gameName) {
         this.borders = borders;
@@ -14,10 +15,11 @@ public class GameData {
         this.gameName = gameName;
     }
 
-    public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes) {
+    public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, MiddlePoint middlePoint) {
         this.borders = borders;
         this.lootboxes = lootboxes;
         this.gameName = "not set";
+        this.middlePoint = middlePoint;
     }
 
     public void setGameID(int gameID) {

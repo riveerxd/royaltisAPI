@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import me.river.royaltisapi.core.data.*;
 import me.river.royaltisapi.core.db.DataRetriever;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,9 +18,15 @@ import java.util.TimerTask;
 import static me.river.royaltisapi.core.game.Game.moveBordersTowardsMiddle;
 
 @RestController
+@DependsOn("socketIOServer")
 public class StartGame {
+    private final SocketIOServer server;
+
     @Autowired
-    private SocketIOServer server;
+    public StartGame(SocketIOServer server) {
+        this.server = server;
+    }
+
     @GetMapping("/start")
     public String startBroadcast(
             @RequestBody String body

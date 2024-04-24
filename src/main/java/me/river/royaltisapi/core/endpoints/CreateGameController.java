@@ -21,14 +21,14 @@ public class CreateGameController {
 
             try {
                 System.out.println(json);
-                GameData gameData = JsonParser.ParseJsonToGameData(json);
+                GameData gameData = JsonParser.parseJsonToGameData(json);
                 DataUploader uploader = new DataUploader();
                 int gameId = uploader.uploadGameData(gameData);
                 System.out.println("Game uploaded: "+gameId);
                 return ResponseEntity.status(HttpStatus.CREATED).body(String.valueOf(gameId));
             }catch (Exception e){
                 System.out.println(e.getMessage());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
             }
         }else{
             System.out.println("Missing auth header");

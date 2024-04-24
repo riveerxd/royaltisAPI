@@ -2,7 +2,6 @@ package me.river.royaltisapi.core.db;
 
 import me.river.royaltisapi.core.User;
 import me.river.royaltisapi.core.managers.TokenManager;
-import org.apache.el.parser.Token;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,5 +30,10 @@ public class LoginCheck {
             System.out.println("CNF error: "+e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean checkLoginToken(String token){
+        User user = TokenManager.getUserFromToken(token);
+        return checkLogin(user);
     }
 }

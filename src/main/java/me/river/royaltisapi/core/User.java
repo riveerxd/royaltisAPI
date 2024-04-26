@@ -1,26 +1,30 @@
 package me.river.royaltisapi.core;
 
+import com.corundumstudio.socketio.SocketIOClient;
+
 import java.util.Objects;
 import java.util.UUID;
 
 public class User {
     private String username;
-    private String password;
+    transient private String password;
     private String email;
     private UUID socketSessionId;
     private Rank rank;
+    transient private SocketIOClient client;
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public User(UUID socketSessionId, Rank rank) {
-        this.socketSessionId = socketSessionId;
+    public User(SocketIOClient client, Rank rank) {
         this.rank = rank;
+        this.client = client;
     }
 
-    public User(UUID socketSessionId) {
-        this.socketSessionId = socketSessionId;
+    public User(SocketIOClient client) {
+        this.client = client;
     }
 
     @Override
@@ -28,12 +32,20 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(socketSessionId, user.socketSessionId);
+        return Objects.equals(client.getSessionId(), user.getClient().getSessionId());
+    }
+
+    public SocketIOClient getClient() {
+        return client;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(socketSessionId);
+    }
+
+    public void setClient(SocketIOClient client) {
+        this.client = client;
     }
 
     public void setRank(Rank rank) {
@@ -45,7 +57,7 @@ public class User {
     }
 
     public UUID getSocketSessionId() {
-        return socketSessionId;
+        return client.getSessionId();
     }
 
     public boolean isAdmin(){

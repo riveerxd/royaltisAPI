@@ -8,12 +8,21 @@ public class LootBox {
     private String type;
     private Coordinates coords;
     private List<Item> items;
+    private int gameId;
 
     public LootBox(int id, String type, Coordinates coords, List<Item> items) {
         this.id = id;
         this.type = type;
         this.coords = coords;
         this.items = items;
+    }
+
+    public LootBox(int id, String type, Coordinates coords, List<Item> items, int gameId) {
+        this.id = id;
+        this.type = type;
+        this.coords = coords;
+        this.items = items;
+        this.gameId = gameId;
     }
 
     public double getId() {
@@ -42,9 +51,15 @@ public class LootBox {
 
     public static class Item {
         private String name;
+        private int lootboxId;
 
         public Item(String name) {
             this.name = name;
+        }
+
+        public Item(String name, int lootboxId) {
+            this.name = name;
+            this.lootboxId = lootboxId;
         }
 
         public String getName() {

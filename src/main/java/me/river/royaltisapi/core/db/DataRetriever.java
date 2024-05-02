@@ -1,9 +1,6 @@
 package me.river.royaltisapi.core.db;
 
-import me.river.royaltisapi.core.data.Border;
-import me.river.royaltisapi.core.data.Coordinates;
-import me.river.royaltisapi.core.data.GameData;
-import me.river.royaltisapi.core.data.LootBox;
+import me.river.royaltisapi.core.data.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +24,8 @@ public class DataRetriever {
                 String gameName = rs.getString("name");
                 ArrayList<Border> borders = retrieveBorders(gameId);
                 ArrayList<LootBox> lootBoxes = retrieveLootboxes(gameId);
-                gameData = new GameData(borders, lootBoxes, gameName);
+                MiddlePoint middlePoint = retrieveMiddlePoint(gameId);
+                gameData = new GameData(borders, lootBoxes, gameName, middlePoint);
                 gameData.setGameID(gameId);
             }
             return gameData;
@@ -105,5 +103,23 @@ public class DataRetriever {
         }catch (Exception e){
             throw new RuntimeException("Failed to retrieve lootbox items from db: "+e.getMessage());
         }
+    }
+
+    private MiddlePoint retrieveMiddlePoint(int gameId){
+        String sql = "SELECT * FROM MiddlePoints WHERE game_id = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, gameId);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()){
+                return new MiddlePoint(new Coordinates(rs.getDouble("coords_latitude"), rs.getDouble("coords_longitude")));
+            }else{
+                throw new RuntimeException("Middlepoint retriever retrieved empty result set");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

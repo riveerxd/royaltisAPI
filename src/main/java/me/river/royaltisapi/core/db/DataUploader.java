@@ -15,6 +15,7 @@ public class DataUploader {
     private static final String INSERT_BORDERS_SQL = "INSERT INTO Borders (game_id, type, coords_latitude, coords_longitude) VALUES (?, ?, ?, ?)";
     private static final String INSERT_LOOTBOXES_SQL = "INSERT INTO LootBoxes (game_id, type, coords_latitude, coords_longitude) VALUES (?, ?, ?, ?)";
     private static final String INSERT_LOOTBOX_ITEMS_SQL = "INSERT INTO LootBoxItems (lootbox_id, name) VALUES (?, ?)";
+    private static final String INSERT_MIDDLEPOINT = "INSERT INTO MiddlePoints (game_id, type, coords_latitude, coords_longitude) VALUES (?, ?, ?, ?)";
 
 
     public Integer uploadGameData(GameData gameData) throws RuntimeException {
@@ -26,6 +27,7 @@ public class DataUploader {
                 uploadBorders();
                 uploadLootboxes();
                 uploadLootboxItems();
+                uploadMiddlePoint();
                 connection.close();
                 return gameUploaded;
             }else{
@@ -40,21 +42,21 @@ public class DataUploader {
         String sql = "INSERT INTO Games (name) VALUES (?)";
         PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, gameName);
+        statement.executeUpdate();
 
-        Integer gameId = null;
         ResultSet generatedKeys = statement.getGeneratedKeys();
         if (generatedKeys.next()) {
-            gameId = generatedKeys.getInt(1);
+            int gameId = generatedKeys.getInt(1);
             this.gameData.setGameID(gameId);
+            statement.close();
+            generatedKeys.close();
+            return gameId;
         } else {
             throw new SQLException("Failed to retrieve generated game ID");
         }
 
-        statement.close();
-        generatedKeys.close();
-        return gameId;
-    }
 
+    }
 
     private void uploadBorders() throws RuntimeException {
         try (PreparedStatement statement = connection.prepareStatement(INSERT_BORDERS_SQL)) {
@@ -112,6 +114,18 @@ public class DataUploader {
             statement.executeBatch();
         } catch (SQLException e) {
             throw new RuntimeException("SQL failed to upload lootbox items: " + e.getMessage());
+        }
+    }
+
+    private void uploadMiddlePoint() {
+        try(PreparedStatement statement = connection.prepareStatement(INSERT_MIDDLEPOINT)) {
+            statement.setInt(1, gameData.getGameID());
+            statement.setString(2, "mapCenter");
+            statement.setDouble(3, gameData.getMiddlePoint().getCoordinates().getLatitude());
+            statement.setDouble(4, gameData.getMiddlePoint().getCoordinates().getLongitude());
+            statement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

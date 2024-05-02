@@ -1,10 +1,11 @@
 package me.river.royaltisapi.core.data;
 public class Border {
-    private double id;
+    private int id;
     private String type;
     private Coordinates coords;
+    private int gameId;
 
-    public double getId() {
+    public int getId() {
         return id;
     }
 
@@ -16,10 +17,17 @@ public class Border {
         return coords;
     }
 
-    public Border(double id, String type, Coordinates coords) {
+    public Border(int id, String type, Coordinates coords) {
         this.id = id;
         this.type = type;
         this.coords = coords;
+    }
+
+    public Border(int id, String type, Coordinates coords, int gameId) {
+        this.id = id;
+        this.type = type;
+        this.coords = coords;
+        this.gameId = gameId;
     }
 
     @Override

@@ -9,18 +9,26 @@ public class GameData {
     private int gameID;
     private MiddlePoint middlePoint;
 
+    public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, String gameName, MiddlePoint middlePoint) {
+        this.middlePoint = middlePoint;
+        this.gameName = gameName;
+        this.lootboxes = lootboxes;
+        this.borders = borders;
+    }
+
     public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, String gameName) {
         this.borders = borders;
         this.lootboxes = lootboxes;
         this.gameName = gameName;
     }
 
-    public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, MiddlePoint middlePoint) {
+    public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, MiddlePoint middlePoint, String gameName) {
         this.borders = borders;
         this.lootboxes = lootboxes;
-        this.gameName = "not set";
         this.middlePoint = middlePoint;
+        this.gameName = gameName;
     }
+
 
     public void setGameID(int gameID) {
         this.gameID = gameID;
@@ -38,6 +46,10 @@ public class GameData {
         return gameName;
     }
 
+    public MiddlePoint getMiddlePoint() {
+        return middlePoint;
+    }
+
     public int getGameID() {
         return gameID;
     }
@@ -45,10 +57,11 @@ public class GameData {
     @Override
     public String toString() {
         return "GameData{" +
-                "borders=" + borders +
-                ", lootboxes=" + lootboxes +
-                ", gameName='" + gameName + '\'' +
-                ", gameID=" + gameID +
+                "\nborders=" + borders +
+                ", \nlootboxes=" + lootboxes +
+                ", \ngameName='" + gameName + '\'' +
+                ", \ngameID=" + gameID +
+                ", \nmiddlePoint=" + middlePoint +
                 '}';
     }
 }

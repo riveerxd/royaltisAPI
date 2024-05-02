@@ -27,7 +27,7 @@ public class CreateGameController {
                 System.out.println("Game uploaded: "+gameId);
                 return ResponseEntity.status(HttpStatus.CREATED).body(String.valueOf(gameId));
             }catch (Exception e){
-                System.out.println(e.getMessage());
+                e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
             }
         }else{

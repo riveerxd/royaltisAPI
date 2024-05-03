@@ -19,9 +19,12 @@ public class LoginCheck {
             statement.setString(1, TokenManager.encrypt(username));
             ResultSet rs = statement.executeQuery();
             if (rs.next()){
-                return rs.getString("password").equals(TokenManager.encrypt(password));
+                boolean is = rs.getString("password").equals(TokenManager.encrypt(password));
+                connection.close();
+                return is;
             }else{
-                throw new RuntimeException("Empty result set");
+                connection.close();
+                throw new IllegalArgumentException("Empty result set");
             }
         } catch (SQLException e) {
             System.out.println("SQL error: "+e.getMessage());

@@ -1,6 +1,7 @@
 package me.river.royaltisapi.core.managers;
 
 import me.river.royaltisapi.core.Lobby;
+import me.river.royaltisapi.core.User;
 import me.river.royaltisapi.core.data.GameId;
 import me.river.royaltisapi.core.data.LobbyCode;
 
@@ -10,19 +11,82 @@ import java.util.Random;
 public class LobbyManager {
     private HashSet<Lobby> lobbies = new HashSet<>();
 
-    public boolean removeLobby(LobbyCode lobbyCode){
+    public boolean doesLobbyExist(LobbyCode lobbyCode) {
+        for (Lobby lobby : lobbies) {
+            if (lobby.getLobbyCode().equals(lobbyCode)) {
+                return true;
+            }
+        }
+        throw new RuntimeException("Lobby does not exist");
+    }
+
+    public GameId getGameIdByLobbyCode(LobbyCode lobbyCode){
         for (Lobby lobby : lobbies){
             if (lobby.getLobbyCode().equals(lobbyCode)){
+                return lobby.getGameId();
+            }
+        }
+        throw new RuntimeException("Lobby does not exist");
+    }
+
+    public boolean connectToLobby(User user, LobbyCode lobbyCode) {
+        if (doesLobbyExist(lobbyCode)) {
+            Lobby wantedLobby = getLobbyByLobbyCode(lobbyCode);
+            return wantedLobby.connectUser(user);
+        }
+        return false;
+    }
+
+    public boolean disconnectFromLobby(User user) {
+        for (Lobby lobby : lobbies) {
+            for (User currUser : lobby.getOnlineUsers()) {
+                if (currUser.equals(user)) {
+                    lobby.disconnectUser(currUser);
+                    checkLobbyDestroy(lobby.getLobbyCode());
+                    return true;
+                }
+            }
+        }
+        throw new RuntimeException("User not connected");
+    }
+
+    public boolean checkLobbyDestroy(LobbyCode lobbyCode){
+        for (Lobby lobby : lobbies){
+            if (lobby.getLobbyCode().equals(lobbyCode)){
+                if (lobby.getOnlineUsers().isEmpty()){
+                    removeLobby(lobbyCode);
+                    System.out.println("Destroyed lobby "+lobbyCode);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Lobby getLobbyByLobbyCode(LobbyCode lobbyCode) {
+        if (doesLobbyExist(lobbyCode)) {
+            for (Lobby lobby : lobbies) {
+                if (lobby.getLobbyCode().equals(lobbyCode)) {
+                    return lobby;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean removeLobby(LobbyCode lobbyCode) {
+        for (Lobby lobby : lobbies) {
+            if (lobby.getLobbyCode().equals(lobbyCode)) {
                 return lobbies.remove(lobby);
             }
         }
         throw new RuntimeException("Lobby not found");
     }
 
-    public String createLobby(GameId gameId){
+    public String createLobby(GameId gameId) {
         LobbyCode lobbyCode = generateLobbyCode();
         Lobby lobby = new Lobby(lobbyCode, gameId);
-        while (lobbies.contains(lobby)){
+        while (lobbies.contains(lobby)) {
             lobbyCode = generateLobbyCode();
             lobby.setLobbyCode(lobbyCode);
         }

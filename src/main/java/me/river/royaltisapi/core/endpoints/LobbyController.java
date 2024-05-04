@@ -3,6 +3,7 @@ package me.river.royaltisapi.core.endpoints;
 import com.google.gson.Gson;
 import me.river.royaltisapi.core.data.GameId;
 import me.river.royaltisapi.core.data.LobbyCode;
+import me.river.royaltisapi.core.db.DbUtils;
 import me.river.royaltisapi.core.db.LoginCheck;
 import me.river.royaltisapi.core.managers.LobbyManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,14 @@ public class LobbyController {
         if (LoginCheck.checkLoginToken(authorizationHeader)){
             try{
                 GameId gameId = gson.fromJson(body, GameId.class);
-                System.out.println(gameId);
-                String lobbyCode = lobbyManager.createLobby(gameId);
-                return ResponseEntity.status(HttpStatus.CREATED).body(lobbyCode);
+                if (DbUtils.doesGameExist(gameId)){
+                    String lobbyCode = lobbyManager.createLobby(gameId);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(lobbyCode);
+                }else{
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Game id does not exist");
+                }
             }catch (Exception e){
+                e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while creating lobby");
             }
         }else {

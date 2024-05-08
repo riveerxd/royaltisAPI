@@ -1,6 +1,6 @@
 package me.river.royaltisapi.core.socket;
 
-import com.corundumstudio.socketio.*;
+import com.corundumstudio.socketio.SocketIOServer;
 import jakarta.annotation.PreDestroy;
 import me.river.royaltisapi.core.managers.LobbyManager;
 import me.river.royaltisapi.core.managers.UserManager;
@@ -21,8 +21,12 @@ public class SocketIOConfig {
         SocketIOServer server = new SocketIOServer(config);
 
         server.addEventListener("message", String.class, (client, data, ackRequest) -> {
-            System.out.println("Message: "+data);
+            System.out.println("Message: " + data);
         });
+
+        server.addEventListener("item_delete", Object.class, ((socketIOClient, data, ackRequest) -> {
+            userManager().handleItemRemove(socketIOClient, data, ackRequest);
+        }));
         server.addConnectListener(client -> userManager().handleClientConnect(client));
 
         server.addDisconnectListener(client -> userManager().handleClientDisconnect(client));
@@ -31,18 +35,13 @@ public class SocketIOConfig {
         return server;
     }
 
-    public static void broadcastMessage(Object data, SocketIOServer server) {
-        System.out.println("Broadcasting message: " + data);
-        server.getBroadcastOperations().sendEvent("broadcastMessage", data);
-    }
-
     @Bean
     public UserManager userManager() {
         return new UserManager();
     }
 
     @Bean
-    public LobbyManager lobbyManager(){
+    public LobbyManager lobbyManager() {
         return new LobbyManager();
     }
 

@@ -1,6 +1,7 @@
 package me.river.royaltisapi.core.data;
 
 import java.util.List;
+import java.util.Objects;
 
 public class LootBox {
     private int id;
@@ -51,7 +52,7 @@ public class LootBox {
 
     public static class Item {
         private String name;
-        private int lootboxId;
+        private int itemId;
 
         public Item(String name) {
             this.name = name;
@@ -59,18 +60,36 @@ public class LootBox {
 
         public Item(String name, int lootboxId) {
             this.name = name;
-            this.lootboxId = lootboxId;
+            this.itemId = lootboxId;
         }
 
         public String getName() {
             return name;
         }
 
+        public int getItemId() {
+            return itemId;
+        }
+
         @Override
         public String toString() {
             return "Item{" +
                     "name='" + name + '\'' +
+                    ", lootboxId=" + itemId +
                     '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Item item = (Item) o;
+            return itemId == item.itemId;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(itemId);
         }
     }
 

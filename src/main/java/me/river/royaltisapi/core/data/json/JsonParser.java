@@ -29,7 +29,7 @@ public class JsonParser {
 
                             switch (type){
                                 case "border":
-                                    double borderId = (double) elementMap.get("id");
+                                    int borderId = (int) Math.round( (double) elementMap.get("id"));
                                     Map<String, Double> borderCoordsMap = (Map<String, Double>) elementMap.get("coords");
                                     Border border = new Border(borderId, type, new Coordinates(borderCoordsMap.get("latitude"), borderCoordsMap.get("longitude")));
                                     borders.add(border);
@@ -52,7 +52,7 @@ public class JsonParser {
 
                                 case "mapCenter":
                                     Map<String, Double> mapCenterCoordMap = (Map<String, Double>) elementMap.get("coords");
-                                    MiddlePoint mp = new MiddlePoint(new Coordinates(mapCenterCoordMap.get("latitude"), mapCenterCoordMap.get("longitude")));
+                                    middlePoint = new MiddlePoint(new Coordinates(mapCenterCoordMap.get("latitude"), mapCenterCoordMap.get("longitude")));
                                     break;
 
                                 case "gameName":
@@ -68,6 +68,7 @@ public class JsonParser {
         }
 
         GameData gameData = new GameData(borders, lootboxes, middlePoint, gameName);
+        System.out.println("parsed gameData: "+gameData);
         return gameData;
     }
 }

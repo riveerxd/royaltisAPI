@@ -3,8 +3,11 @@ package me.river.royaltisapi.core.endpoints;
 import com.corundumstudio.socketio.BroadcastOperations;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.google.gson.Gson;
+import me.river.royaltisapi.core.Lobby;
+import me.river.royaltisapi.core.User;
 import me.river.royaltisapi.core.data.*;
 import me.river.royaltisapi.core.db.DataRetriever;
+import me.river.royaltisapi.core.managers.LobbyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,23 +22,26 @@ import static me.river.royaltisapi.core.game.Game.moveBordersTowardsMiddle;
 
 @RestController
 @DependsOn("socketIOServer")
-public class StartGame {
+public class StartGameController {
     private final SocketIOServer server;
-
+    private final LobbyManager lobbyManager;
     @Autowired
-    public StartGame(SocketIOServer server) {
+    public StartGameController(SocketIOServer server, LobbyManager lobbyManager) {
         this.server = server;
+        this.lobbyManager = lobbyManager;
     }
-
     @GetMapping("/start")
     public String startBroadcast(
             @RequestBody String body
     ) {
+        System.out.println("recieved "+body);
+
         /* get req pattern
         {
             "gameId": 23,
             "count":  1000,
-            "interval": 50
+            "interval": 50,
+            "lobbyCode":164895,
         }
          */
         Gson gson = new Gson();
@@ -45,16 +51,23 @@ public class StartGame {
             BroadcastOperations broadcastOperations = server.getBroadcastOperations();
             DataRetriever retriever = new DataRetriever();
             GameData data = retriever.retrieveGameData(gameProps.getGameId());
-
+            Lobby curerntLobby = lobbyManager.getLobbyByLobbyCode(gameProps.getLobbyCode());
+            System.out.println("Retrieved data: "+data);
+            if (data == null){
+                throw new RuntimeException("Data is null");
+            }
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 int count = gameProps.getCount();
                 ArrayList<Border> lastBorder = data.getBorders();
                 @Override
                 public void run() {
-                    ArrayList<Border> updatedBorders = moveBordersTowardsMiddle(lastBorder, new MiddlePoint((new Coordinates(50.07305079677018, 14.425703412853181))), count);
+                    ArrayList<Border> updatedBorders = moveBordersTowardsMiddle(lastBorder, data.getMiddlePoint(), count);
                     lastBorder = updatedBorders;
-                    broadcastOperations.sendEvent("borders", gson.toJson(updatedBorders));
+                    for (User user : curerntLobby.getOnlineUsers()){
+                        user.getClient().sendEvent("borders", gson.toJson(updatedBorders));
+                        System.out.println("sending "+gson.toJson(updatedBorders)+" to "+user.getSocketSessionId());
+                    }
                     count--;
                     if (count == 0){
                         timer.cancel();
@@ -63,7 +76,7 @@ public class StartGame {
             }, 0, gameProps.getInterval());
 
         }catch (Exception e){
-            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
         return "Broadcast started!";
     }

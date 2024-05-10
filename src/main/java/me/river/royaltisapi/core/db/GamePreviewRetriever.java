@@ -21,7 +21,7 @@ public class GamePreviewRetriever {
         }
     }
 
-    public Object[] retrievePreview(){
+    public Object[] retrievePreview()  {
         ArrayList<GameDetails> gdl;
         ArrayList<Border> bl;
         ArrayList<LootBox> lbl;
@@ -31,7 +31,8 @@ public class GamePreviewRetriever {
             bl = retrieveBorders();
             lbl = retrieveLootboxes();
             mpl = retrieveMiddlePoint();
-        } catch (RuntimeException e) {
+            connection.close();
+        } catch (Exception e) {
             gdl = new ArrayList<>();
             bl = new ArrayList<>();
             lbl = new ArrayList<>();

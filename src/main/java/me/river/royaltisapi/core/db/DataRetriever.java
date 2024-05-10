@@ -28,6 +28,7 @@ public class DataRetriever {
                 gameData = new GameData(borders, lootBoxes, gameName, middlePoint);
                 gameData.setGameID(gameId);
             }
+            connection.close();
             return gameData;
         }catch (Exception e){
             System.out.println(e.getMessage());
@@ -94,7 +95,8 @@ public class DataRetriever {
             ArrayList<LootBox.Item> items = new ArrayList<>();
             while(rs.next()){
                 String name = rs.getString("name");
-                LootBox.Item item = new LootBox.Item(name);
+                int id = rs.getInt("id");
+                LootBox.Item item = new LootBox.Item(name, id);
                 items.add(item);
             }
             return items;

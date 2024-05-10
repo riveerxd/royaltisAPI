@@ -1,12 +1,15 @@
 package me.river.royaltisapi.core.managers;
 
+import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.BroadcastOperations;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.google.gson.Gson;
+import me.river.royaltisapi.core.Lobby;
 import me.river.royaltisapi.core.Rank;
 import me.river.royaltisapi.core.User;
 import me.river.royaltisapi.core.data.LobbyCode;
+import me.river.royaltisapi.core.data.LootBox;
 import me.river.royaltisapi.core.db.LoginCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -67,6 +70,9 @@ public class UserManager {
                     System.out.println("Disconnected admin " + client.getSessionId() + ". lobby code invalid");
                 } finally {
                     broadcastOperations.sendEvent("playerUpdate", gson.toJson(users));
+                    client.sendEvent("removed_items", gson.toJson(lobbyManager.getLobbyByClient(client).getRemovedItems()));
+                    System.out.println("sending "+gson.toJson(lobbyManager.getLobbyByClient(client).getRemovedItems())+" to "+client.getSessionId());
+
 
                 }
             } else {
@@ -82,7 +88,7 @@ public class UserManager {
                 System.out.println("Client connected " + client.getSessionId());
             }catch (Exception r) {
                 client.disconnect();
-                System.out.println("Disconnected user " + client.getSessionId() + ". lobby code invalid");
+                System.out.println("Disconnected user " + client.getSessionId() + " lobby code invalid: "+client.getHandshakeData().getHttpHeaders().get("X-LobbyCode"));
             }finally {
                 broadcastOperations.sendEvent("playerUpdate", gson.toJson(users));
             }
@@ -100,7 +106,20 @@ public class UserManager {
     }
     }
 
-    public HashSet<User> getUsers() {
-        return users;
+    public void handleItemRemove(SocketIOClient client, Object data, AckRequest ack){
+        try{
+            System.out.println("data: "+ data);
+            LootBox.Item item = gson.fromJson(data.toString(), LootBox.Item.class);
+
+            Lobby lobby = lobbyManager.getLobbyByClient(client);
+            lobby.addItem(item);
+            for (User user : lobby.getOnlineUsers()){
+                user.getClient().sendEvent("removed_items", gson.toJson(lobby.getRemovedItems()));
+                System.out.println("sending "+gson.toJson(lobby.getRemovedItems())+" to "+user.getSocketSessionId());
+            }
+        } catch (Exception e){
+            System.out.println("Error while removing item: "+e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

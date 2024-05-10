@@ -14,7 +14,9 @@ public class DbUtils {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Games WHERE id = ?");
             statement.setInt(1, Integer.parseInt(String.valueOf(gameId.gameId())));
             ResultSet rs = statement.executeQuery();
-            return rs.next();
+            boolean is = rs.next();
+            connection.close();
+            return is;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {

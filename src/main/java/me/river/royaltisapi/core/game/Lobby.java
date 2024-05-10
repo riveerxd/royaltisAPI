@@ -1,8 +1,7 @@
-package me.river.royaltisapi.core;
+package me.river.royaltisapi.core.game;
 
-import com.google.gson.Gson;
-import me.river.royaltisapi.core.data.GameId;
-import me.river.royaltisapi.core.data.LobbyCode;
+import me.river.royaltisapi.core.data.records.GameId;
+import me.river.royaltisapi.core.data.records.LobbyCode;
 import me.river.royaltisapi.core.data.LootBox;
 
 import java.util.HashSet;

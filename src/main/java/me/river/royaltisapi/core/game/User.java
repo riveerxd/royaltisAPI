@@ -1,6 +1,7 @@
-package me.river.royaltisapi.core;
+package me.river.royaltisapi.core.game;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import me.river.royaltisapi.core.data.Rank;
 
 import java.util.Objects;
 import java.util.UUID;

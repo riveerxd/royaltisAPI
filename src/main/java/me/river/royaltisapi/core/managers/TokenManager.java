@@ -16,10 +16,10 @@ public class TokenManager {
 
     public static User getUserFromToken(String token){
         String[] decrypted = decrypt(token).split(";");
-        return new User(decrypted[0], decrypted[1], "dwdwa");
+        return new User(decrypted[0], decrypted[1]);
     }
 
-    private static String encrypt(String plainText) {
+    public static String encrypt(String plainText) {
         try {
             byte[] plainTextBytes = plainText.getBytes();
             Cipher cipher = Cipher.getInstance(ALGORITHM);

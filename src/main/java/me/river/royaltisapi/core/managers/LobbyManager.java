@@ -1,5 +1,6 @@
 package me.river.royaltisapi.core.managers;
 
+import com.corundumstudio.socketio.SocketIOClient;
 import me.river.royaltisapi.core.Lobby;
 import me.river.royaltisapi.core.User;
 import me.river.royaltisapi.core.data.GameId;
@@ -20,9 +21,9 @@ public class LobbyManager {
         throw new RuntimeException("Lobby does not exist");
     }
 
-    public GameId getGameIdByLobbyCode(LobbyCode lobbyCode){
-        for (Lobby lobby : lobbies){
-            if (lobby.getLobbyCode().equals(lobbyCode)){
+    public GameId getGameIdByLobbyCode(LobbyCode lobbyCode) {
+        for (Lobby lobby : lobbies) {
+            if (lobby.getLobbyCode().equals(lobbyCode)) {
                 return lobby.getGameId();
             }
         }
@@ -50,17 +51,17 @@ public class LobbyManager {
         throw new RuntimeException("User not connected");
     }
 
-    public boolean checkLobbyDestroy(LobbyCode lobbyCode){
-        for (Lobby lobby : lobbies){
-            if (lobby.getLobbyCode().equals(lobbyCode)){
-                if (lobby.getOnlineUsers().isEmpty()){
+    public boolean checkLobbyDestroy(LobbyCode lobbyCode) {
+        for (Lobby lobby : lobbies) {
+            if (lobby.getLobbyCode().equals(lobbyCode)) {
+                if (lobby.getOnlineUsers().isEmpty()) {
                     removeLobby(lobbyCode);
-                    System.out.println("Destroyed lobby "+lobbyCode);
+                    System.out.println("Destroyed lobby " + lobbyCode);
                     return true;
                 }
             }
         }
-        return false;
+        throw new RuntimeException("Lobby not found");
     }
 
     public Lobby getLobbyByLobbyCode(LobbyCode lobbyCode) {
@@ -71,7 +72,18 @@ public class LobbyManager {
                 }
             }
         }
-        return null;
+        throw new RuntimeException("Lobby not found");
+    }
+
+    public Lobby getLobbyByClient(SocketIOClient client) {
+        for (Lobby lobby : lobbies){
+            for (User user : lobby.getOnlineUsers()){
+                if (user.getClient().getSessionId().equals(client.getSessionId())){
+                    return lobby;
+                }
+            }
+        }
+        throw new RuntimeException("Lobby not found");
     }
 
     public boolean removeLobby(LobbyCode lobbyCode) {

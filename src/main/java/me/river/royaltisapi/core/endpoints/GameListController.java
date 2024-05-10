@@ -14,8 +14,8 @@ public class GameListController {
     private Gson gson = new Gson();
     @GetMapping("/gamelist")
     public ResponseEntity gameList(
-            @RequestHeader(value = "Authorization", required = false) String authHeader
-    ){
+            @RequestHeader(value = "Authorization") String authHeader
+    ) {
         if (LoginCheck.checkLoginToken(authHeader)){
             GamePreviewRetriever gpr = new GamePreviewRetriever();
             Object[] gd = gpr.retrievePreview();

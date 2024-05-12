@@ -1,6 +1,9 @@
 package me.river.royaltisapi.core.db;
 
 import me.river.royaltisapi.core.data.*;
+import me.river.royaltisapi.core.data.records.Border;
+import me.river.royaltisapi.core.data.records.Coordinates;
+import me.river.royaltisapi.core.data.records.GameDetails;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

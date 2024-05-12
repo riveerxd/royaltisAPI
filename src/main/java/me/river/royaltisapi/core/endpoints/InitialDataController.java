@@ -2,7 +2,7 @@ package me.river.royaltisapi.core.endpoints;
 
 import com.google.gson.Gson;
 import me.river.royaltisapi.core.data.GameData;
-import me.river.royaltisapi.core.data.GameId;
+import me.river.royaltisapi.core.data.records.GameId;
 import me.river.royaltisapi.core.db.DataRetriever;
 import me.river.royaltisapi.core.db.LoginCheck;
 import org.springframework.http.HttpStatus;

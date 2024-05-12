@@ -1,8 +1,8 @@
 package me.river.royaltisapi.core.endpoints;
 
 import com.google.gson.Gson;
-import me.river.royaltisapi.core.data.GameId;
-import me.river.royaltisapi.core.data.LobbyCode;
+import me.river.royaltisapi.core.data.records.GameId;
+import me.river.royaltisapi.core.data.records.LobbyCode;
 import me.river.royaltisapi.core.managers.LobbyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

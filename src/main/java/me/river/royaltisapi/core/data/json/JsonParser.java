@@ -2,12 +2,20 @@ package me.river.royaltisapi.core.data.json;
 
 import com.google.gson.Gson;
 import me.river.royaltisapi.core.data.*;
+import me.river.royaltisapi.core.data.records.Border;
+import me.river.royaltisapi.core.data.records.Coordinates;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class JsonParser {
+    /**
+     * This method takes in a string of JSON data and parses it into an instance of the GameData class.
+     *
+     * @param jsonData the input JSON data
+     * @return an instance of the GameData class containing the parsed data
+     */
     public static GameData parseJsonToGameData(String jsonData) {
         Gson gson = new Gson();
 
@@ -67,8 +75,6 @@ public class JsonParser {
             }
         }
 
-        GameData gameData = new GameData(borders, lootboxes, middlePoint, gameName);
-        System.out.println("parsed gameData: "+gameData);
-        return gameData;
+        return new GameData(borders, lootboxes, middlePoint, gameName);
     }
 }

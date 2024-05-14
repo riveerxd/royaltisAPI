@@ -1,13 +1,22 @@
 package me.river.royaltisapi.core.db;
 
-import me.river.royaltisapi.core.data.GameId;
+import me.river.royaltisapi.core.data.records.GameId;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Database utilities.
+ */
 public class DbUtils {
+    /**
+     * Checks if a game exists.
+     *
+     * @param gameId the game id
+     * @return true if the game exists, false otherwise
+     */
     public static boolean doesGameExist(GameId gameId){
         try {
             Connection connection = DBConnector.getConnection();

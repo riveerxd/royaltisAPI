@@ -9,9 +9,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for getting a list of games.
+ */
 @RestController
 public class GameListController {
+    /**
+     * The Gson instance.
+     */
     private Gson gson = new Gson();
+
+    /**
+     * Gets a list of games.
+     *
+     * @param authHeader the authorization header
+     * @return the response entity
+     */
     @GetMapping("/gamelist")
     public ResponseEntity gameList(
             @RequestHeader(value = "Authorization") String authHeader

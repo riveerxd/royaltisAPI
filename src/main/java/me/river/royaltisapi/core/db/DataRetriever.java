@@ -1,6 +1,8 @@
 package me.river.royaltisapi.core.db;
 
 import me.river.royaltisapi.core.data.*;
+import me.river.royaltisapi.core.data.records.Border;
+import me.river.royaltisapi.core.data.records.Coordinates;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,8 +11,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class DataRetriever {
+    /**
+     * The database connection.
+     */
     private Connection connection;
 
+    /**
+     * Retrieves a GameData object from the database.
+     *
+     * @param gameId The ID of the game to retrieve data for.
+     * @return A GameData object containing the game's name, borders, lootboxes, and middle point.
+     */
     public GameData retrieveGameData(int gameId){
         try{
             this.connection = DBConnector.getConnection();
@@ -36,6 +47,12 @@ public class DataRetriever {
         }
     }
 
+    /**
+     * Retrieves borders from the database.
+     *
+     * @param gameId The game ID to retrieve borders for
+     * @return A list of Border objects
+     */
     private ArrayList<Border> retrieveBorders(int gameId){
         try {
             String sql = "SELECT * FROM Borders WHERE game_id = ?";
@@ -60,6 +77,12 @@ public class DataRetriever {
         }
     }
 
+    /**
+     * Retrieves lootboxes from the database.
+     *
+     * @param gameId The game ID to retrieve lootboxes for
+     * @return A list of LootBox objects
+     */
     private ArrayList<LootBox> retrieveLootboxes(int gameId){
         try{
             String sql = "SELECT * FROM LootBoxes WHERE game_id = ?";
@@ -85,6 +108,12 @@ public class DataRetriever {
         }
     }
 
+    /**
+     * Retrieves items from a lootbox.
+     *
+     * @param lootboxId The ID of the lootbox to retrieve items for
+     * @return A list of LootBox.Item objects
+     */
     private ArrayList<LootBox.Item> retrieveLootboxItems(int lootboxId){
         try{
             String sql = "SELECT * FROM LootBoxItems WHERE lootbox_id = ?";
@@ -107,6 +136,12 @@ public class DataRetriever {
         }
     }
 
+    /**
+     * Retrieves the middle point of a game.
+     *
+     * @param gameId The ID of the game to retrieve the middle point for
+     * @return A MiddlePoint object
+     */
     private MiddlePoint retrieveMiddlePoint(int gameId){
         String sql = "SELECT * FROM MiddlePoints WHERE game_id = ?";
         try {

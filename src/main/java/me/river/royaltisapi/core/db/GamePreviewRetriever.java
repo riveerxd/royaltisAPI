@@ -11,9 +11,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * Retrieves game previews from the database.
+ */
 public class GamePreviewRetriever {
+    /**
+     * The database connection.
+     */
     private Connection connection;
 
+    /**
+     * Creates a new GamePreviewRetriever.
+     */
     public GamePreviewRetriever() {
         try {
             this.connection = DBConnector.getConnection();
@@ -23,7 +32,11 @@ public class GamePreviewRetriever {
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Retrieves a preview of the game.
+     *
+     * @return An array containing the game details, borders, lootboxes, and middle points.
+     */
     public Object[] retrievePreview()  {
         ArrayList<GameDetails> gdl;
         ArrayList<Border> bl;
@@ -45,7 +58,11 @@ public class GamePreviewRetriever {
                 gdl, bl, lbl, mpl
         };
     }
-
+    /**
+     * Retrieves the game details.
+     *
+     * @return A list of GameDetails objects.
+     */
     private ArrayList<GameDetails> retrieveGameDetails(){
         ArrayList<GameDetails> list = new ArrayList<>();
         try {
@@ -64,7 +81,11 @@ public class GamePreviewRetriever {
         }
 
     }
-
+    /**
+     * Retrieves the borders.
+     *
+     * @return A list of Border objects.
+     */
     private ArrayList<Border> retrieveBorders(){
         try {
             String sql = "SELECT * FROM Borders";
@@ -89,6 +110,11 @@ public class GamePreviewRetriever {
         }
     }
 
+    /**
+     * Retrieves the lootboxes.
+     *
+     * @return A list of LootBox objects.
+     */
     private ArrayList<LootBox> retrieveLootboxes(){
         try{
             String sql = "SELECT * FROM LootBoxes";
@@ -112,6 +138,12 @@ public class GamePreviewRetriever {
             throw new RuntimeException("Failed to retrieve lootboxes from db: "+e.getMessage());
         }
     }
+
+    /**
+     * Retrieves the middle points.
+     *
+     * @return A list of MiddlePoint objects.
+     */
     private ArrayList<MiddlePoint> retrieveMiddlePoint(){
         ArrayList<MiddlePoint> middlePoints = new ArrayList<>();
         String sql = "SELECT * FROM MiddlePoints";

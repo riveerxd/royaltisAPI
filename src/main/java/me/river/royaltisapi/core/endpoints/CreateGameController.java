@@ -10,8 +10,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for creating a game.
+ */
 @RestController
 public class CreateGameController {
+    /**
+     * Creates a new game.
+     *
+     * @param authorizationHeader the authorization header
+     * @param json the json data
+     * @return the response entity
+     */
     @PostMapping("/creategame")
     public ResponseEntity<String> createMap(
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,

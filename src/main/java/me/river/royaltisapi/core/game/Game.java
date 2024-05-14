@@ -6,7 +6,18 @@ import me.river.royaltisapi.core.data.MiddlePoint;
 
 import java.util.ArrayList;
 
+/**
+ * The game logic.
+ */
 public class Game {
+    /**
+     * Moves the borders towards the middle.
+     *
+     * @param borders the borders
+     * @param middlePoint the middle point
+     * @param updateCount the update count
+     * @return the updated borders
+     */
     public static ArrayList<Border> moveBordersTowardsMiddle(ArrayList<Border> borders, MiddlePoint middlePoint, int updateCount) {
         if (updateCount <= 0) {
             return new ArrayList<>(borders);

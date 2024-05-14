@@ -9,10 +9,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for getting initial data.
+ */
 @RestController
 public class InitialDataController {
+    /**
+     * The Gson instance.
+     */
     Gson gson = new Gson();
 
+    /**
+     * Gets the initial data.
+     *
+     * @param authHeader the authorization header
+     * @param body the body
+     * @return the response entity
+     */
     @PostMapping("/getinitialdata")
     public ResponseEntity getInitialData(
             @RequestHeader(value = "Authorization", required = false) String authHeader,

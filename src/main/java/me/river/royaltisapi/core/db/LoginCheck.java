@@ -1,6 +1,6 @@
 package me.river.royaltisapi.core.db;
 
-import me.river.royaltisapi.core.User;
+import me.river.royaltisapi.core.game.User;
 import me.river.royaltisapi.core.managers.TokenManager;
 
 import java.sql.Connection;
@@ -8,7 +8,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Checks if a user can log in.
+ */
 public class LoginCheck {
+    /**
+     * Checks user credentials with the database.
+     *
+     * @param user the user
+     * @return true if the user can log in, false otherwise
+     */
     public static boolean checkLogin(User user){
         try {
             String username = user.getUsername();
@@ -35,6 +44,12 @@ public class LoginCheck {
         }
     }
 
+    /**
+     * Checks if a user can log in with a token.
+     *
+     * @param token the token
+     * @return true if the user can log in, false otherwise
+     */
     public static boolean checkLoginToken(String token){
         User user = TokenManager.getUserFromToken(token);
         return checkLogin(user);

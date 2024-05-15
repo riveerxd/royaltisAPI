@@ -1,8 +1,8 @@
 package me.river.royaltisapi.core.endpoints;
 
 import com.google.gson.Gson;
-import me.river.royaltisapi.core.data.GameId;
-import me.river.royaltisapi.core.data.LobbyCode;
+import me.river.royaltisapi.core.data.records.GameId;
+import me.river.royaltisapi.core.data.records.LobbyCode;
 import me.river.royaltisapi.core.db.DbUtils;
 import me.river.royaltisapi.core.db.LoginCheck;
 import me.river.royaltisapi.core.managers.LobbyManager;
@@ -12,17 +12,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for joining a game.
+ */
 @RestController
 @DependsOn("lobbyManager")
 public class LobbyController {
+    /**
+     * The lobby manager.
+     */
     private LobbyManager lobbyManager;
 
+    /**
+     * Instantiates a new Lobby controller.
+     *
+     * @param lobbyManager the lobby manager
+     */
     @Autowired
     public LobbyController(LobbyManager lobbyManager) {
         this.lobbyManager = lobbyManager;
     }
 
+    /**
+     * The Gson instance.
+     */
     private Gson gson = new Gson();
+    /**
+     * Tries to create a lobby, returns the lobby code of the created lobby.
+     *
+     * @param authorizationHeader the authorization header
+     * @param body the body
+     * @return the response entity
+     */
     @PostMapping("/createlobby")
     public ResponseEntity<String> createLobby(
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
@@ -46,6 +67,13 @@ public class LobbyController {
         }
     }
 
+    /**
+     * Removes a lobby.
+     *
+     * @param authorizationHeader the authorization header
+     * @param body the body
+     * @return the response entity
+     */
     @DeleteMapping("/removelobby")
     public ResponseEntity<String> removeLobby(
             @RequestHeader(value = "Authorization", required = false) String authorizationHeader,

@@ -14,13 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class JoinController {
     @Autowired
-    LobbyManager lobbyManager;
+    private LobbyManager lobbyManager;
 
     @PostMapping("/join")
     public ResponseEntity join(
             @RequestBody String body
     ){
-        Gson gson = new Gson();
         try{
             LobbyCode lobbyCode = gson.fromJson(body, LobbyCode.class);
             if (!lobbyManager.doesLobbyExist(lobbyCode)){

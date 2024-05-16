@@ -1,8 +1,8 @@
 package me.river.royaltisapi.core.endpoints;
 
 import com.google.gson.Gson;
-import me.river.royaltisapi.core.User;
-import me.river.royaltisapi.core.data.UserLogin;
+import me.river.royaltisapi.core.game.User;
+import me.river.royaltisapi.core.data.records.UserLogin;
 import me.river.royaltisapi.core.db.LoginCheck;
 import me.river.royaltisapi.core.managers.TokenManager;
 import org.springframework.http.HttpHeaders;
@@ -12,8 +12,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for logging in.
+ */
 @RestController
 public class LoginController {
+    /**
+     * Logs in a user.
+     *
+     * @param json the json
+     * @return the response entity
+     */
     @PostMapping("/login")
     public ResponseEntity<String> login(
             @RequestBody String json

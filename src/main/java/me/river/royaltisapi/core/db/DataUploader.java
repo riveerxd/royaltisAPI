@@ -84,7 +84,7 @@ public class DataUploader {
             for (Border curr : borders) {
                 statement.setInt(1, gameData.getGameID());
                 statement.setString(2, curr.type());
-                statement.setDouble(3, curr.coords().longitude());
+                statement.setDouble(3, curr.coords().latitude());
                 statement.setDouble(4, curr.coords().longitude());
                 statement.addBatch();
             }
@@ -152,7 +152,7 @@ public class DataUploader {
             statement.setInt(1, gameData.getGameID());
             statement.setString(2, "mapCenter");
             statement.setDouble(3, gameData.getMiddlePoint().getCoordinates().latitude());
-            statement.setDouble(4, gameData.getMiddlePoint().getCoordinates().latitude());
+            statement.setDouble(4, gameData.getMiddlePoint().getCoordinates().longitude());
             statement.execute();
         } catch (SQLException e) {
             throw new RuntimeException(e);

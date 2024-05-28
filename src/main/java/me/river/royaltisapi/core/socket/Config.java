@@ -3,7 +3,6 @@ package me.river.royaltisapi.core.socket;
 import com.corundumstudio.socketio.SocketIOServer;
 import jakarta.annotation.PreDestroy;
 import me.river.royaltisapi.core.db.DBConnector;
-import me.river.royaltisapi.core.db.DbUtils;
 import me.river.royaltisapi.core.managers.LobbyManager;
 import me.river.royaltisapi.core.managers.UserManager;
 import org.springframework.context.annotation.Bean;
@@ -14,22 +13,24 @@ import java.sql.SQLException;
 
 @Configuration
 public class Config {
+    private String socketHost = "0.0.0.0";
+    private int socketPort = 9090;
+
     @Bean
     public UserManager userManager() {
         return new UserManager();
     }
+
     @Bean
     public LobbyManager lobbyManager() {
         return new LobbyManager();
     }
+
     @Bean
     public SocketIOServerShutdown socketIOServerShutdown(SocketIOServer server) {
         return new SocketIOServerShutdown(server);
     }
 
-    private String socketHost = "0.0.0.0";
-
-    private int socketPort = 9090;
 
     @Bean
     public SocketIOServer socketIOServer() {
@@ -60,13 +61,13 @@ public class Config {
             Connection connection = DBConnector.getConnection();
             if (connection == null) throw new RuntimeException("Couldnt connect to database");
         } catch (SQLException e) {
-            System.err.println("SQL error: "+e.getMessage());
+            System.err.println("SQL error: " + e.getMessage());
             System.exit(500);
         } catch (ClassNotFoundException e) {
-            System.err.println("Driver error: "+e.getMessage());
+            System.err.println("Driver error: " + e.getMessage());
             System.exit(501);
         } catch (RuntimeException e) {
-            System.err.println("Database error: "+e.getMessage());
+            System.err.println("Database error: " + e.getMessage());
             System.exit(502);
         }
     }

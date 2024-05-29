@@ -9,5 +9,4 @@ public class RoyaltisApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(RoyaltisApiApplication.class, args);
     }
-
 }

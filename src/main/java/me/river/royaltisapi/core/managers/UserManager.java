@@ -5,6 +5,7 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.google.gson.Gson;
 import me.river.royaltisapi.core.data.records.Coordinates;
+import me.river.royaltisapi.core.exceptions.UserNotFoundException;
 import me.river.royaltisapi.core.game.Lobby;
 import me.river.royaltisapi.core.data.Rank;
 import me.river.royaltisapi.core.game.User;
@@ -50,13 +51,13 @@ public class UserManager {
      *
      * @param sessionId the session id
      */
-    public boolean removeUserBySessionId(UUID sessionId) {
+    public boolean removeUserBySessionId(UUID sessionId) throws UserNotFoundException {
         for (User user : users) {
             if (user.getSocketSessionId().toString().equals(sessionId.toString())) {
                 return users.remove(user);
             }
         }
-        throw new RuntimeException("User not found");
+        throw new UserNotFoundException("User not found");
     }
 
     /**
@@ -66,13 +67,13 @@ public class UserManager {
      * @param sessionId the session id
      * @return the user by session id
      */
-    public User getUserBySessionId(UUID sessionId) {
+    public User getUserBySessionId(UUID sessionId) throws UserNotFoundException {
         for (User user : users) {
             if (user.getSocketSessionId().toString().equals(sessionId.toString())) {
                 return user;
             }
         }
-        throw new RuntimeException("User not found");
+        throw new UserNotFoundException("User not found");
     }
 
     /**

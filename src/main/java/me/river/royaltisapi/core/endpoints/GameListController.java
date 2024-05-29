@@ -29,12 +29,17 @@ public class GameListController {
     public ResponseEntity gameList(
             @RequestHeader(value = "Authorization") String authHeader
     ) {
-        if (LoginCheck.checkLoginToken(authHeader)){
-            GamePreviewRetriever gpr = new GamePreviewRetriever();
-            Object[] gd = gpr.retrievePreview();
-            return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(gd));
-        }else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+        try{
+            if (LoginCheck.checkLoginToken(authHeader)){
+                GamePreviewRetriever gpr = new GamePreviewRetriever();
+                Object[] gd = gpr.retrievePreview();
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(gd));
+            }else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            }
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+
     }
 }

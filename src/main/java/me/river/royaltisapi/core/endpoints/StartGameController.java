@@ -1,6 +1,5 @@
 package me.river.royaltisapi.core.endpoints;
 
-import com.corundumstudio.socketio.BroadcastOperations;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.google.gson.Gson;
 import me.river.royaltisapi.core.data.records.Border;
@@ -12,8 +11,11 @@ import me.river.royaltisapi.core.db.DataRetriever;
 import me.river.royaltisapi.core.managers.LobbyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -62,41 +64,49 @@ public class StartGameController {
      * @return the string
      */
     @PostMapping("/start")
-    public String startBroadcast(
+    public ResponseEntity startBroadcast(
+            @RequestHeader(value = "Authorization") String authorizationHeader,
             @RequestBody String body
     ) {
-        try{
-            GameProps gameProps = gson.fromJson(body, GameProps.class);
+        if (authorizationHeader != null && !authorizationHeader.isEmpty()) {
+            try {
+                GameProps gameProps = gson.fromJson(body, GameProps.class);
 
-            BroadcastOperations broadcastOperations = server.getBroadcastOperations();
-            DataRetriever retriever = new DataRetriever();
-            GameData data = retriever.retrieveGameData(gameProps.gameId());
-            Lobby curerntLobby = lobbyManager.getLobbyByLobbyCode(gameProps.getLobbyCode());
-            System.out.println("Retrieved data: "+data);
-            if (data == null){
-                throw new RuntimeException("Data is null");
-            }
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                int count = gameProps.count();
-                ArrayList<Border> lastBorder = data.getBorders();
-                @Override
-                public void run() {
-                    ArrayList<Border> updatedBorders = moveBordersTowardsMiddle(lastBorder, data.getMiddlePoint(), count);
-                    lastBorder = updatedBorders;
-                    for (User user : curerntLobby.getOnlineUsers()){
-                        user.getClient().sendEvent("borders", gson.toJson(updatedBorders));
-                    }
-                    count--;
-                    if (count == 0){
-                        timer.cancel();
-                    }
+                DataRetriever retriever = new DataRetriever();
+                GameData data = retriever.retrieveGameData(gameProps.gameId());
+                Lobby curerntLobby = lobbyManager.getLobbyByLobbyCode(gameProps.getLobbyCode());
+                System.out.println("Retrieved data: " + data);
+                if (data == null) {
+                    throw new RuntimeException("Data is null");
                 }
-            }, 0, gameProps.interval());
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    int count = gameProps.count();
+                    ArrayList<Border> lastBorder = data.getBorders();
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return "Game started";
+                    @Override
+                    public void run() {
+                        ArrayList<Border> updatedBorders = moveBordersTowardsMiddle(lastBorder, data.getMiddlePoint(), count);
+                        lastBorder = updatedBorders;
+                        for (User user : curerntLobby.getOnlineUsers()) {
+                            user.getClient().sendEvent("borders", gson.toJson(updatedBorders));
+                        }
+                        count--;
+                        if (count == 0) {
+                            timer.cancel();
+                        }
+                    }
+                }, 0, gameProps.interval());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.OK).body("Game started");
+        }else{
+                System.out.println("Missing auth header");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header is missing");
+            }
+
     }
 }

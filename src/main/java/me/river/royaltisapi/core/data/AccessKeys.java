@@ -1,5 +1,7 @@
 package me.river.royaltisapi.core.data;
 
+import me.river.royaltisapi.core.exceptions.NullEnvironmentVariableException;
+
 /**
  * Contains the access keys for the database.
  */
@@ -28,8 +30,13 @@ public class AccessKeys {
      * Reads the env variable "royaltis_db_user"
      * @return the env variable value
      */
-    public String getUSERNAME() {
-        return System.getenv("royaltis_db_user");
+    public String getUSERNAME() throws NullEnvironmentVariableException {
+        String user =  System.getenv("royaltis_db_user");
+        if (user == null){
+            throw new NullEnvironmentVariableException("Environment variable royaltis_db_user is null");
+        }else{
+            return user;
+        }
     }
 
     /**
@@ -37,7 +44,12 @@ public class AccessKeys {
      * Reads the env variable "royaltis_db_pass"
      * @return the env variable value
      */
-    public String getPASSWORD() {
-        return System.getenv("royaltis_db_pass");
+    public String getPASSWORD() throws NullEnvironmentVariableException {
+        String pass =  System.getenv("royaltis_db_pass");
+        if (pass == null){
+            throw new NullEnvironmentVariableException("Environment variable royaltis_db_pass is null");
+        }else{
+            return pass;
+        }
     }
 }

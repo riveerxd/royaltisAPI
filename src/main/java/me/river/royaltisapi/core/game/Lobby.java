@@ -1,8 +1,10 @@
 package me.river.royaltisapi.core.game;
 
+import com.corundumstudio.socketio.SocketIOClient;
+import me.river.royaltisapi.core.data.LootBox;
 import me.river.royaltisapi.core.data.records.GameId;
 import me.river.royaltisapi.core.data.records.LobbyCode;
-import me.river.royaltisapi.core.data.LootBox;
+import me.river.royaltisapi.core.exceptions.UserNotFoundException;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -34,7 +36,7 @@ public class Lobby {
      * @param item the item
      * @return the boolean
      */
-    public boolean addItem(LootBox.Item item){
+    public boolean addItem(LootBox.Item item) {
         return removedItems.add(item);
     }
 
@@ -44,9 +46,9 @@ public class Lobby {
      * @param user the user
      * @return connected or not
      */
-    public boolean connectUser(User user){
+    public boolean connectUser(User user) {
         onlineUsers.add(user);
-        System.out.println(user.isAdmin() ? "Admin ": "User "+user.getSocketSessionId()+" connected to lobby "+lobbyCode);
+        System.out.println(user.isAdmin() ? "Admin " : "User " + user.getSocketSessionId() + " connected to lobby " + lobbyCode);
         return true;
     }
 
@@ -56,8 +58,24 @@ public class Lobby {
      * @param user the user
      * @return disconnected or not
      */
-    public boolean disconnectUser(User user){
+    public boolean disconnectUser(User user) {
         return onlineUsers.remove(user);
+    }
+
+
+    /**
+     * Disconnects all users
+     * @return disconnected or not
+     */
+    public boolean disconnectAllUsers() {
+        try{
+            for (User user : onlineUsers) {
+                user.getClient().disconnect();
+            }
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
 
     /**
@@ -67,6 +85,21 @@ public class Lobby {
      */
     public HashSet<User> getOnlineUsers() {
         return onlineUsers;
+    }
+
+    /**
+     * Returns online user based in client object
+     *
+     * @param client
+     * @return user
+     */
+    public User getOnlineUserByClient(SocketIOClient client) throws UserNotFoundException {
+        for (User user : onlineUsers) {
+            if (user.getClient().getSessionId().toString().equals(client.getSessionId().toString())) {
+                return user;
+            }
+        }
+        throw new UserNotFoundException("User not found");
     }
 
     /**
@@ -114,7 +147,7 @@ public class Lobby {
      * Instantiates a new Lobby.
      *
      * @param lobbyCode the lobby code
-     * @param gameId the game id
+     * @param gameId    the game id
      */
     public Lobby(LobbyCode lobbyCode, GameId gameId) {
         this.lobbyCode = lobbyCode;
@@ -141,6 +174,7 @@ public class Lobby {
 
     /**
      * Lobby to string.
+     *
      * @return the string
      */
     @Override

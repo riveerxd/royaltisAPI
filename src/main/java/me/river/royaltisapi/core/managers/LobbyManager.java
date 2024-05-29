@@ -1,6 +1,8 @@
 package me.river.royaltisapi.core.managers;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import me.river.royaltisapi.core.exceptions.LobbyNotFoundException;
+import me.river.royaltisapi.core.exceptions.UserNotFoundException;
 import me.river.royaltisapi.core.game.Lobby;
 import me.river.royaltisapi.core.game.User;
 import me.river.royaltisapi.core.data.records.GameId;
@@ -24,13 +26,13 @@ public class LobbyManager {
      * @param lobbyCode the lobby code
      * @return the boolean
      */
-    public boolean doesLobbyExist(LobbyCode lobbyCode) {
+    public boolean doesLobbyExist(LobbyCode lobbyCode) throws LobbyNotFoundException {
         for (Lobby lobby : lobbies) {
             if (lobby.getLobbyCode().equals(lobbyCode)) {
                 return true;
             }
         }
-        throw new RuntimeException("Lobby does not exist");
+        throw new LobbyNotFoundException("Lobby does not exist");
     }
 
     /**
@@ -39,13 +41,13 @@ public class LobbyManager {
      * @param lobbyCode the lobby code
      * @return the boolean
      */
-    public GameId getGameIdByLobbyCode(LobbyCode lobbyCode) {
+    public GameId getGameIdByLobbyCode(LobbyCode lobbyCode) throws LobbyNotFoundException {
         for (Lobby lobby : lobbies) {
             if (lobby.getLobbyCode().equals(lobbyCode)) {
                 return lobby.getGameId();
             }
         }
-        throw new RuntimeException("Lobby does not exist");
+        throw new LobbyNotFoundException("Lobby does not exist");
     }
 
     /**
@@ -55,7 +57,7 @@ public class LobbyManager {
      * @param lobbyCode the lobby code
      * @return connected or not
      */
-    public boolean connectToLobby(User user, LobbyCode lobbyCode) {
+    public boolean connectToLobby(User user, LobbyCode lobbyCode) throws LobbyNotFoundException {
         if (doesLobbyExist(lobbyCode)) {
             Lobby wantedLobby = getLobbyByLobbyCode(lobbyCode);
             return wantedLobby.connectUser(user);
@@ -69,7 +71,7 @@ public class LobbyManager {
      * @param user the user
      * @return disconnected or not
      */
-    public boolean disconnectFromLobby(User user) {
+    public boolean disconnectFromLobby(User user) throws UserNotFoundException, LobbyNotFoundException {
         for (Lobby lobby : lobbies) {
             for (User currUser : lobby.getOnlineUsers()) {
                 if (currUser.equals(user)) {
@@ -79,7 +81,7 @@ public class LobbyManager {
                 }
             }
         }
-        throw new RuntimeException("User not connected");
+        throw new UserNotFoundException("User not connected");
     }
 
     /**
@@ -88,7 +90,7 @@ public class LobbyManager {
      * @param lobbyCode the lobby code
      * @return destroyed or not
      */
-    public boolean checkLobbyDestroy(LobbyCode lobbyCode) {
+    public boolean checkLobbyDestroy(LobbyCode lobbyCode) throws LobbyNotFoundException {
         for (Lobby lobby : lobbies) {
             if (lobby.getLobbyCode().equals(lobbyCode)) {
                 if (lobby.getOnlineUsers().isEmpty()) {
@@ -98,7 +100,7 @@ public class LobbyManager {
                 }
             }
         }
-        throw new RuntimeException("Lobby not found");
+        throw new LobbyNotFoundException("Lobby not found");
     }
 
     /**
@@ -107,7 +109,7 @@ public class LobbyManager {
      * @param lobbyCode the lobby code
      * @return the lobby
      */
-    public Lobby getLobbyByLobbyCode(LobbyCode lobbyCode) {
+    public Lobby getLobbyByLobbyCode(LobbyCode lobbyCode) throws LobbyNotFoundException {
         if (doesLobbyExist(lobbyCode)) {
             for (Lobby lobby : lobbies) {
                 if (lobby.getLobbyCode().equals(lobbyCode)) {
@@ -115,7 +117,7 @@ public class LobbyManager {
                 }
             }
         }
-        throw new RuntimeException("Lobby not found");
+        throw new LobbyNotFoundException("Lobby not found");
     }
 
     /**
@@ -124,7 +126,7 @@ public class LobbyManager {
      * @param client the client
      * @return the lobby
      */
-    public Lobby getLobbyByClient(SocketIOClient client) {
+    public Lobby getLobbyByClient(SocketIOClient client) throws LobbyNotFoundException {
         for (Lobby lobby : lobbies){
             for (User user : lobby.getOnlineUsers()){
                 if (user.getClient().getSessionId().equals(client.getSessionId())){
@@ -132,7 +134,7 @@ public class LobbyManager {
                 }
             }
         }
-        throw new RuntimeException("Lobby not found");
+        throw new LobbyNotFoundException("Lobby not found");
     }
 
     /**
@@ -141,13 +143,14 @@ public class LobbyManager {
      * @param lobbyCode the lobby code
      * @return removed or not
      */
-    public boolean removeLobby(LobbyCode lobbyCode) {
+    public boolean removeLobby(LobbyCode lobbyCode) throws LobbyNotFoundException {
         for (Lobby lobby : lobbies) {
             if (lobby.getLobbyCode().equals(lobbyCode)) {
+                lobby.disconnectAllUsers();
                 return lobbies.remove(lobby);
             }
         }
-        throw new RuntimeException("Lobby not found");
+        throw new LobbyNotFoundException("Lobby not found");
     }
 
     /**

@@ -56,7 +56,7 @@ public class User {
      * Instantiates a new User.
      *
      * @param client the client
-     * @param rank the rank
+     * @param rank   the rank
      */
     public User(SocketIOClient client, Rank rank) {
         this.rank = rank;
@@ -74,6 +74,7 @@ public class User {
 
     /**
      * User equals.
+     *
      * @param o the object
      * @return equals or not
      */
@@ -87,10 +88,20 @@ public class User {
 
     /**
      * Gets client.
+     *
      * @return the client
      */
     public SocketIOClient getClient() {
         return client;
+    }
+
+    /**
+     * Sets client.
+     *
+     * @param client the client
+     */
+    public void setClient(SocketIOClient client) {
+        this.client = client;
     }
 
     /**
@@ -104,15 +115,6 @@ public class User {
     }
 
     /**
-     * Sets client.
-     *
-     * @param client the client
-     */
-    public void setClient(SocketIOClient client) {
-        this.client = client;
-    }
-
-    /**
      * Sets rank.
      *
      * @param rank the rank
@@ -122,15 +124,8 @@ public class User {
     }
 
     /**
-     * Sets socket session id.
-     * @param socketSessionId the socket session id
-     */
-    public void setSocketSessionId(UUID socketSessionId) {
-        this.socketSessionId = socketSessionId;
-    }
-
-    /**
      * Gets socket session id.
+     *
      * @return the socket session id
      */
     public UUID getSocketSessionId() {
@@ -138,7 +133,17 @@ public class User {
     }
 
     /**
+     * Sets socket session id.
+     *
+     * @param socketSessionId the socket session id
+     */
+    public void setSocketSessionId(UUID socketSessionId) {
+        this.socketSessionId = socketSessionId;
+    }
+
+    /**
      * Gets user coordinates
+     *
      * @return the user coordinates
      */
     public Coordinates getCoordinates() {
@@ -147,6 +152,7 @@ public class User {
 
     /**
      * Sets user coordinates
+     *
      * @param coordinates the coordinates
      */
     public void setCoordinates(Coordinates coordinates) {
@@ -158,12 +164,13 @@ public class User {
      *
      * @return if the user is an admin or not
      */
-    public boolean isAdmin(){
+    public boolean isAdmin() {
         return rank == Rank.ADMIN;
     }
 
     /**
      * Gets username.
+     *
      * @return the username
      */
     public String getUsername() {
@@ -172,6 +179,7 @@ public class User {
 
     /**
      * Gets password.
+     *
      * @return the password
      */
     public String getPassword() {
@@ -180,6 +188,7 @@ public class User {
 
     /**
      * Gets email.
+     *
      * @return the email
      */
     public String getEmail() {
@@ -188,6 +197,7 @@ public class User {
 
     /**
      * User to string.
+     *
      * @return the string
      */
     @Override
@@ -200,4 +210,3 @@ public class User {
                 '}';
     }
 }
-

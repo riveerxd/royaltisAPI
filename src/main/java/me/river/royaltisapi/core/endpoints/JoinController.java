@@ -3,6 +3,7 @@ package me.river.royaltisapi.core.endpoints;
 import com.google.gson.Gson;
 import me.river.royaltisapi.core.data.records.GameId;
 import me.river.royaltisapi.core.data.records.LobbyCode;
+import me.river.royaltisapi.core.exceptions.LobbyNotFoundException;
 import me.river.royaltisapi.core.managers.LobbyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,15 +37,16 @@ public class JoinController {
     @PostMapping("/join")
     public ResponseEntity join(
             @RequestBody String body
-    ){
-        try{
+    ) {
+        try {
             LobbyCode lobbyCode = gson.fromJson(body, LobbyCode.class);
-            if (!lobbyManager.doesLobbyExist(lobbyCode)){
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid lobby code");
-            }
+            lobbyManager.doesLobbyExist(lobbyCode);
+
             GameId wantedGameId = lobbyManager.getGameIdByLobbyCode(lobbyCode);
             return ResponseEntity.status(HttpStatus.OK).body(wantedGameId.gameId());
-        }catch (Exception e){
+        } catch (RuntimeException r) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid lobby code");
+        } catch (LobbyNotFoundException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

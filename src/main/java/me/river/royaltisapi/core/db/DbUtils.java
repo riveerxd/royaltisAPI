@@ -1,6 +1,7 @@
 package me.river.royaltisapi.core.db;
 
 import me.river.royaltisapi.core.data.records.GameId;
+import me.river.royaltisapi.core.exceptions.NullEnvironmentVariableException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,19 +18,13 @@ public class DbUtils {
      * @param gameId the game id
      * @return true if the game exists, false otherwise
      */
-    public static boolean doesGameExist(GameId gameId){
-        try {
-            Connection connection = DBConnector.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM Games WHERE id = ?");
-            statement.setInt(1, Integer.parseInt(String.valueOf(gameId.gameId())));
-            ResultSet rs = statement.executeQuery();
-            boolean is = rs.next();
-            connection.close();
-            return is;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    public static boolean doesGameExist(GameId gameId) throws SQLException, ClassNotFoundException, NullEnvironmentVariableException {
+        Connection connection = DBConnector.getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM Games WHERE id = ?");
+        statement.setInt(1, Integer.parseInt(String.valueOf(gameId.gameId())));
+        ResultSet rs = statement.executeQuery();
+        boolean is = rs.next();
+        connection.close();
+        return is;
     }
 }

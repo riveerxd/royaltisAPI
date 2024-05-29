@@ -28,7 +28,7 @@ public class InitialDataController {
      */
     @PostMapping("/getinitialdata")
     public ResponseEntity getInitialData(
-            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestHeader(value = "Authorization") String authHeader,
             @RequestBody String body
     ){
         try{

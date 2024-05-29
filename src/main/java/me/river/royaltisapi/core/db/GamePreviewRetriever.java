@@ -1,9 +1,11 @@
 package me.river.royaltisapi.core.db;
 
-import me.river.royaltisapi.core.data.*;
+import me.river.royaltisapi.core.data.LootBox;
+import me.river.royaltisapi.core.data.MiddlePoint;
 import me.river.royaltisapi.core.data.records.Border;
 import me.river.royaltisapi.core.data.records.Coordinates;
 import me.river.royaltisapi.core.data.records.GameDetails;
+import me.river.royaltisapi.core.exceptions.NullEnvironmentVariableException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,77 +25,58 @@ public class GamePreviewRetriever {
     /**
      * Creates a new GamePreviewRetriever.
      */
-    public GamePreviewRetriever() {
-        try {
-            this.connection = DBConnector.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    public GamePreviewRetriever() throws RuntimeException, ClassNotFoundException, NullEnvironmentVariableException, SQLException {
+        this.connection = DBConnector.getConnection();
     }
+
     /**
      * Retrieves a preview of the game.
      *
      * @return An array containing the game details, borders, lootboxes, and middle points.
      */
-    public Object[] retrievePreview()  {
-        ArrayList<GameDetails> gdl;
-        ArrayList<Border> bl;
-        ArrayList<LootBox> lbl;
-        ArrayList<MiddlePoint> mpl;
-        try {
-            gdl = retrieveGameDetails();
-            bl = retrieveBorders();
-            lbl = retrieveLootboxes();
-            mpl = retrieveMiddlePoint();
-            connection.close();
-        } catch (Exception e) {
-            gdl = new ArrayList<>();
-            bl = new ArrayList<>();
-            lbl = new ArrayList<>();
-            mpl = new ArrayList<>();
-        }
+    public Object[] retrievePreview() throws SQLException {
+        ArrayList<GameDetails> gdl = retrieveGameDetails();
+        ArrayList<Border> bl = retrieveBorders();
+        ArrayList<LootBox> lbl = retrieveLootboxes();
+        ArrayList<MiddlePoint> mpl = retrieveMiddlePoint();
+        connection.close();
         return new Object[]{
                 gdl, bl, lbl, mpl
         };
     }
+
     /**
      * Retrieves the game details.
      *
      * @return A list of GameDetails objects.
      */
-    private ArrayList<GameDetails> retrieveGameDetails(){
+    private ArrayList<GameDetails> retrieveGameDetails() throws SQLException {
         ArrayList<GameDetails> list = new ArrayList<>();
-        try {
-            String sql = "SELECT * FROM Games";
-            PreparedStatement st = connection.prepareStatement(sql);
-            ResultSet rs = st.executeQuery();
-            while(rs.next()){
-                int gameId = rs.getInt("id");
-                String gameName = rs.getString("name");
-                GameDetails gd = new GameDetails(gameId, gameName);
-                list.add(gd);
-            }
-            return list;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        String sql = "SELECT * FROM Games";
+        PreparedStatement st = connection.prepareStatement(sql);
+        ResultSet rs = st.executeQuery();
+        while (rs.next()) {
+            int gameId = rs.getInt("id");
+            String gameName = rs.getString("name");
+            GameDetails gd = new GameDetails(gameId, gameName);
+            list.add(gd);
         }
-
+        return list;
     }
+
     /**
      * Retrieves the borders.
      *
      * @return A list of Border objects.
      */
-    private ArrayList<Border> retrieveBorders(){
+    private ArrayList<Border> retrieveBorders() {
         try {
             String sql = "SELECT * FROM Borders";
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
 
             ArrayList<Border> borders = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 int gameId = rs.getInt("game_id");
                 int id = rs.getInt("id");
                 String type = rs.getString("type");
@@ -103,10 +86,10 @@ public class GamePreviewRetriever {
                 borders.add(border);
             }
             return borders;
-        }catch (SQLException e){
-            throw new RuntimeException("SQL failed to retrieve borders from db: "+e.getMessage());
-        }catch (Exception e){
-            throw new RuntimeException("Failed to retrieve borders from db: "+e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL failed to retrieve borders from db: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve borders from db: " + e.getMessage());
         }
     }
 
@@ -115,14 +98,14 @@ public class GamePreviewRetriever {
      *
      * @return A list of LootBox objects.
      */
-    private ArrayList<LootBox> retrieveLootboxes(){
-        try{
+    private ArrayList<LootBox> retrieveLootboxes() {
+        try {
             String sql = "SELECT * FROM LootBoxes";
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
 
             ArrayList<LootBox> lootBoxes = new ArrayList<>();
-            while(rs.next()){
+            while (rs.next()) {
                 int gameId = rs.getInt("game_id");
                 int id = rs.getInt("id");
                 String type = rs.getString("type");
@@ -132,10 +115,10 @@ public class GamePreviewRetriever {
                 lootBoxes.add(lootBox);
             }
             return lootBoxes;
-        }catch (SQLException e){
-            throw new RuntimeException("SQL failed to retrieve lootboxes from db: "+e.getMessage());
-        }catch (Exception e){
-            throw new RuntimeException("Failed to retrieve lootboxes from db: "+e.getMessage());
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL failed to retrieve lootboxes from db: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve lootboxes from db: " + e.getMessage());
         }
     }
 
@@ -144,14 +127,14 @@ public class GamePreviewRetriever {
      *
      * @return A list of MiddlePoint objects.
      */
-    private ArrayList<MiddlePoint> retrieveMiddlePoint(){
+    private ArrayList<MiddlePoint> retrieveMiddlePoint() {
         ArrayList<MiddlePoint> middlePoints = new ArrayList<>();
         String sql = "SELECT * FROM MiddlePoints";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 int gameId = rs.getInt("game_id");
                 double latitude = rs.getDouble("coords_latitude");
                 double longitude = rs.getDouble("coords_longitude");

@@ -24,13 +24,11 @@ public class CreateGameController {
      */
     @PostMapping("/creategame")
     public ResponseEntity<String> createMap(
-            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+            @RequestHeader(value = "Authorization") String authorizationHeader,
             @RequestBody String json
     ){
         if (authorizationHeader != null && !authorizationHeader.isEmpty()){
-
             try {
-                System.out.println(json);
                 GameData gameData = JsonParser.parseJsonToGameData(json);
                 DataUploader uploader = new DataUploader();
                 int gameId = uploader.uploadGameData(gameData);

@@ -3,6 +3,7 @@ package me.river.royaltisapi.core.db;
 import me.river.royaltisapi.core.data.*;
 import me.river.royaltisapi.core.data.records.Border;
 import me.river.royaltisapi.core.data.records.Coordinates;
+import me.river.royaltisapi.core.exceptions.NullEnvironmentVariableException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,8 +23,7 @@ public class DataRetriever {
      * @param gameId The ID of the game to retrieve data for.
      * @return A GameData object containing the game's name, borders, lootboxes, and middle point.
      */
-    public GameData retrieveGameData(int gameId){
-        try{
+    public GameData retrieveGameData(int gameId) throws SQLException, NullEnvironmentVariableException, ClassNotFoundException {
             this.connection = DBConnector.getConnection();
 
             String sql = "SELECT * FROM Games WHERE id = ?";
@@ -41,10 +41,7 @@ public class DataRetriever {
             }
             connection.close();
             return gameData;
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return null;
-        }
+
     }
 
     /**

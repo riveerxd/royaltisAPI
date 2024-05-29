@@ -1,5 +1,6 @@
 package me.river.royaltisapi.core.db;
 
+import me.river.royaltisapi.core.exceptions.NullEnvironmentVariableException;
 import me.river.royaltisapi.core.game.User;
 import me.river.royaltisapi.core.managers.TokenManager;
 
@@ -18,29 +19,21 @@ public class LoginCheck {
      * @param user the user
      * @return true if the user can log in, false otherwise
      */
-    public static boolean checkLogin(User user){
-        try {
-            String username = user.getUsername();
-            String password = user.getPassword();
+    public static boolean checkLogin(User user) throws SQLException, NullEnvironmentVariableException, ClassNotFoundException {
+        String username = user.getUsername();
+        String password = user.getPassword();
 
-            Connection connection = DBConnector.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT password FROM Users WHERE username = ?");
-            statement.setString(1, TokenManager.encrypt(username));
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()){
-                boolean is = rs.getString("password").equals(TokenManager.encrypt(password));
-                connection.close();
-                return is;
-            }else{
-                connection.close();
-                throw new IllegalArgumentException("Empty result set");
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL error: "+e.getMessage());
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            System.out.println("CNF error: "+e.getMessage());
-            throw new RuntimeException(e);
+        Connection connection = DBConnector.getConnection();
+        PreparedStatement statement = connection.prepareStatement("SELECT password FROM Users WHERE username = ?");
+        statement.setString(1, TokenManager.encrypt(username));
+        ResultSet rs = statement.executeQuery();
+        if (rs.next()) {
+            boolean is = rs.getString("password").equals(TokenManager.encrypt(password));
+            connection.close();
+            return is;
+        } else {
+            connection.close();
+            return false;
         }
     }
 
@@ -50,7 +43,7 @@ public class LoginCheck {
      * @param token the token
      * @return true if the user can log in, false otherwise
      */
-    public static boolean checkLoginToken(String token){
+    public static boolean checkLoginToken(String token) throws SQLException, NullEnvironmentVariableException, ClassNotFoundException {
         User user = TokenManager.getUserFromToken(token);
         return checkLogin(user);
     }

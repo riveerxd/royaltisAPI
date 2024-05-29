@@ -3,6 +3,7 @@ package me.river.royaltisapi.core.socket;
 import com.corundumstudio.socketio.SocketIOServer;
 import jakarta.annotation.PreDestroy;
 import me.river.royaltisapi.core.db.DBConnector;
+import me.river.royaltisapi.core.exceptions.NullEnvironmentVariableException;
 import me.river.royaltisapi.core.managers.LobbyManager;
 import me.river.royaltisapi.core.managers.UserManager;
 import org.springframework.context.annotation.Bean;
@@ -69,6 +70,9 @@ public class Config {
         } catch (RuntimeException e) {
             System.err.println("Database error: " + e.getMessage());
             System.exit(502);
+        } catch (NullEnvironmentVariableException e) {
+            System.err.println("Environment variable error: "+ e.getMessage());
+            System.exit(503);
         }
     }
 

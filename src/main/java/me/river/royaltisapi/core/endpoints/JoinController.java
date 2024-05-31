@@ -5,6 +5,8 @@ import me.river.royaltisapi.core.data.records.GameId;
 import me.river.royaltisapi.core.data.records.LobbyCode;
 import me.river.royaltisapi.core.exceptions.LobbyNotFoundException;
 import me.river.royaltisapi.core.managers.LobbyManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,41 +15,46 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controller for joining a game.
+ * This controller handles requests to join a game lobby.
  */
 @RestController
 public class JoinController {
-    /**
-     * The lobby manager.
-     */
+    private static final Logger logger = LoggerFactory.getLogger(JoinController.class);
+
     @Autowired
     private LobbyManager lobbyManager;
 
-    /**
-     * The Gson instance.
-     */
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
 
     /**
-     * Responds with game id of wanted game based on lobby code.
+     * Handles POST requests to "/join". It attempts to join a game lobby using the provided lobby code.
+     * If the lobby exists and the join is successful, it returns the GameId of the lobby.
      *
-     * @param body the body
-     * @return the response entity
+     * @param body The JSON string containing the lobby code.
+     * @return A ResponseEntity with the GameId on success (HTTP 200),
+     *         or an error response with a relevant status code (HTTP 403 or 500).
      */
     @PostMapping("/join")
-    public ResponseEntity join(
-            @RequestBody String body
-    ) {
+    public ResponseEntity join(@RequestBody String body) {
         try {
             LobbyCode lobbyCode = gson.fromJson(body, LobbyCode.class);
-            lobbyManager.doesLobbyExist(lobbyCode);
+            logger.info("Received join request with lobby code: {}", lobbyCode.lobbyCode());
 
-            GameId wantedGameId = lobbyManager.getGameIdByLobbyCode(lobbyCode);
-            return ResponseEntity.status(HttpStatus.OK).body(wantedGameId.gameId());
-        } catch (RuntimeException r) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid lobby code");
+            if (lobbyManager.doesLobbyExist(lobbyCode)) {
+                logger.info("Lobby with code {} exists.", lobbyCode.lobbyCode());
+                GameId wantedGameId = lobbyManager.getGameIdByLobbyCode(lobbyCode);
+                logger.info("Returning game ID {} for lobby code {}.", wantedGameId.gameId(), lobbyCode.lobbyCode());
+                return ResponseEntity.status(HttpStatus.OK).body(wantedGameId.gameId());
+            } else {
+                logger.warn("Lobby with code {} not found.", lobbyCode.lobbyCode());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid lobby code");
+            }
         } catch (LobbyNotFoundException e) {
+            logger.error("Error retrieving game ID for lobby: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) { // Catching general exceptions for unexpected errors
+            logger.error("Unexpected error processing join request: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
         }
     }
 }

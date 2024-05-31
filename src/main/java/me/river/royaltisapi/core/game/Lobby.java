@@ -5,93 +5,123 @@ import me.river.royaltisapi.core.data.LootBox;
 import me.river.royaltisapi.core.data.records.GameId;
 import me.river.royaltisapi.core.data.records.LobbyCode;
 import me.river.royaltisapi.core.exceptions.UserNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Objects;
 
 /**
- * Represents a lobby.
+ * Represents a game lobby, which manages connections of online users and keeps track of game state.
  */
 public class Lobby {
-    /**
-     * The lobby code.
-     */
+    private static final Logger logger = LoggerFactory.getLogger(Lobby.class);
+
     private LobbyCode lobbyCode;
-    /**
-     * The game id.
-     */
     private GameId gameId;
-    /**
-     * The online users.
-     */
     private HashSet<User> onlineUsers = new HashSet<>();
-    /**
-     * The removed items.
-     */
     private HashSet<LootBox.Item> removedItems = new HashSet<>();
 
     /**
-     * Add item to removed items.
-     *
-     * @param item the item
-     * @return the boolean
+     * Creates a new lobby for the specified game.
+     * @param lobbyCode Unique code for the lobby.
+     * @param gameId The ID of the game associated with this lobby.
      */
-    public boolean addItem(LootBox.Item item) {
-        return removedItems.add(item);
+    public Lobby(LobbyCode lobbyCode, GameId gameId) {
+        this.lobbyCode = lobbyCode;
+        this.gameId = gameId;
+        logger.info("Lobby {} created for game {}", lobbyCode.lobbyCode(), gameId.gameId());
     }
 
     /**
-     * Connects a user.
-     *
-     * @param user the user
-     * @return connected or not
+     * Adds an item to the list of removed items in the game.
+     * @param item The item to be added.
+     * @return true if the item was added successfully, false otherwise.
+     */
+    public boolean addItem(LootBox.Item item) {
+        boolean added = removedItems.add(item);
+        if (added) {
+            logger.info("Item {} added to removed items for lobby {}", item.getName(), lobbyCode.lobbyCode());
+        }
+        return added;
+    }
+
+    /**
+     * Connects a user to the lobby.
+     * @param user The user to be connected.
+     * @return true if the user was connected successfully, false otherwise.
      */
     public boolean connectUser(User user) {
         onlineUsers.add(user);
-        System.out.println(user.isAdmin() ? "Admin " : "User " + user.getSocketSessionId() + " connected to lobby " + lobbyCode);
+        logger.info("{} {} connected to lobby {}", user.isAdmin() ? "Admin" : "User", user.getSocketSessionId(), lobbyCode.lobbyCode());
         return true;
     }
 
     /**
-     * Disconnects a user.
-     *
-     * @param user the user
-     * @return disconnected or not
+     * Disconnects a user from the lobby.
+     * @param user The user to be disconnected.
+     * @return true if the user was disconnected successfully, false otherwise.
      */
     public boolean disconnectUser(User user) {
-        return onlineUsers.remove(user);
+        boolean removed = onlineUsers.remove(user);
+        if (removed) {
+            logger.info("User {} disconnected from lobby {}", user.getSocketSessionId(), lobbyCode.lobbyCode());
+        }
+        return removed;
     }
 
-
     /**
-     * Disconnects all users
-     * @return disconnected or not
+     * Disconnects all users from the lobby.
+     * @return true if all users were disconnected successfully, false otherwise.
      */
     public boolean disconnectAllUsers() {
-        try{
+        logger.info("Disconnecting all users from lobby {}", lobbyCode.lobbyCode());
+        try {
             for (User user : onlineUsers) {
+                logger.debug("Disconnecting user {} from lobby {}", user.getSocketSessionId(), lobbyCode.lobbyCode());
                 user.getClient().disconnect();
             }
             return true;
-        } catch (Exception e){
+        } catch (Exception e) {
+            logger.error("Error disconnecting users from lobby {}: {}", lobbyCode.lobbyCode(), e.getMessage());
             return false;
         }
     }
 
     /**
-     * Gets online users.
-     *
-     * @return the online users
+     * @return The lobby code.
+     */
+    public LobbyCode getLobbyCode() {
+        return lobbyCode;
+    }
+
+    /**
+     * Sets the lobby code.
+     * @param lobbyCode The new lobby code.
+     */
+    public void setLobbyCode(LobbyCode lobbyCode) {
+        this.lobbyCode = lobbyCode;
+    }
+
+    /**
+     * @return The ID of the game associated with this lobby.
+     */
+    public GameId getGameId() {
+        return gameId;
+    }
+
+    /**
+     * @return A set of all online users in the lobby.
      */
     public HashSet<User> getOnlineUsers() {
         return onlineUsers;
     }
 
     /**
-     * Returns online user based in client object
-     *
-     * @param client
-     * @return user
+     * Gets an online user by their socket client.
+     * @param client The socket client of the user.
+     * @return The user object if found.
+     * @throws UserNotFoundException If the user is not found in the lobby.
      */
     public User getOnlineUserByClient(SocketIOClient client) throws UserNotFoundException {
         for (User user : onlineUsers) {
@@ -103,19 +133,12 @@ public class Lobby {
     }
 
     /**
-     * Gets removed items.
-     *
-     * @return the removed items
+     * @return A set of all removed items in the game.
      */
     public HashSet<LootBox.Item> getRemovedItems() {
         return removedItems;
     }
 
-    /**
-     * Lobby equals.
-     * @param o the object
-     * @return equals or not
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -124,58 +147,14 @@ public class Lobby {
         return Objects.equals(lobbyCode, lobby.lobbyCode);
     }
 
-    /**
-     * Sets lobby code.
-     *
-     * @param lobbyCode the lobby code
-     */
-    public void setLobbyCode(LobbyCode lobbyCode) {
-        this.lobbyCode = lobbyCode;
-    }
-
-    /**
-     * Hash code int.
-     *
-     * @return the int
-     */
     @Override
     public int hashCode() {
         return Objects.hashCode(lobbyCode);
     }
 
     /**
-     * Instantiates a new Lobby.
-     *
-     * @param lobbyCode the lobby code
-     * @param gameId    the game id
-     */
-    public Lobby(LobbyCode lobbyCode, GameId gameId) {
-        this.lobbyCode = lobbyCode;
-        this.gameId = gameId;
-    }
-
-    /**
-     * Gets lobby code.
-     *
-     * @return the lobby code
-     */
-    public LobbyCode getLobbyCode() {
-        return lobbyCode;
-    }
-
-    /**
-     * Gets game id.
-     *
-     * @return the game id
-     */
-    public GameId getGameId() {
-        return gameId;
-    }
-
-    /**
-     * Lobby to string.
-     *
-     * @return the string
+     * Returns a string representation of the lobby.
+     * @return The string representation.
      */
     @Override
     public String toString() {

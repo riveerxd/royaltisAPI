@@ -1,11 +1,9 @@
 package me.river.royaltisapi.core.data.json;
 
-import me.river.royaltisapi.core.data.*;
+import me.river.royaltisapi.core.data.GameData;
+import me.river.royaltisapi.core.data.LootBox;
 import me.river.royaltisapi.core.data.records.Border;
-import me.river.royaltisapi.core.data.records.Coordinates;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

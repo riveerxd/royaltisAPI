@@ -139,8 +139,8 @@ CREATE TABLE Users (
 
 Set the following environment variables with your specific values:
 
-- `royaltis_db_driver`, `royaltis_db_url`, `royaltis_db_user`, `royaltis_db_pass`: Configure your database connection. 💽
-- Optionally, you can customize `socketHost` and `socketPort` in `Config.java` to change the Socket.IO server settings. ⚙️
+- `royaltis_db_driver`, `royaltis_db_url`, `royaltis_db_user`, `royaltis_db_pass`: Configure your database connection 💽
+- Optionally, you can customize `socketHost` and `socketPort` in `Config.java` to change the Socket.IO server settings ⚙️
 
 ### Building and Running 🛠️
 

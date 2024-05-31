@@ -35,10 +35,11 @@ public class GameData {
 
     /**
      * Creates a new GameData instance with the specified borders, loot boxes, game name, and middle point.
-     * @param borders The list of borders in this game.
-     * @param lootboxes The list of loot boxes in this game.
-     * @param gameName The name of the game.
-     * @param middlePoint The middle point of the game board.
+     *
+     * @param borders      The list of borders in this game.
+     * @param lootboxes    The list of loot boxes in this game.
+     * @param gameName     The name of the game.
+     * @param middlePoint  The middle point of the game board.
      */
     public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, String gameName, MiddlePoint middlePoint) {
         this.borders = borders;
@@ -48,21 +49,8 @@ public class GameData {
     }
 
     /**
-     * Creates a new GameData instance with the specified borders, loot boxes, game name, and middle point.
-     * @param borders The list of borders in this game.
-     * @param lootboxes The list of loot boxes in this game.
-     * @param gameName The name of the game.
-     * @param middlePoint The middle point of the game board.
-     */
-    public GameData(ArrayList<Border> borders, ArrayList<LootBox> lootboxes, MiddlePoint middlePoint, String gameName) {
-        this.borders = borders;
-        this.lootboxes = lootboxes;
-        this.middlePoint = middlePoint;
-        this.gameName = gameName;
-    }
-
-    /**
      * Returns the list of borders in this game.
+     *
      * @return The list of borders in this game.
      */
     public ArrayList<Border> getBorders() {
@@ -71,6 +59,7 @@ public class GameData {
 
     /**
      * Returns the list of loot boxes in this game.
+     *
      * @return The list of loot boxes in this game.
      */
     public ArrayList<LootBox> getLootboxes() {
@@ -79,6 +68,7 @@ public class GameData {
 
     /**
      * Returns the name of the game.
+     *
      * @return The name of the game.
      */
     public String getGameName() {
@@ -87,6 +77,7 @@ public class GameData {
 
     /**
      * Returns the unique identifier for this game.
+     *
      * @return The unique identifier for this game.
      */
     public int getGameID() {
@@ -95,6 +86,7 @@ public class GameData {
 
     /**
      * Returns the middle point of the game board.
+     *
      * @return The middle point of the game board.
      */
     public MiddlePoint getMiddlePoint() {
@@ -103,6 +95,7 @@ public class GameData {
 
     /**
      * Sets the unique identifier for this game.
+     *
      * @param gameID The unique identifier for this game.
      */
     public void setGameID(int gameID) {
@@ -110,8 +103,9 @@ public class GameData {
     }
 
     /**
-     * Game data to string
-     * @return the string.
+     * Returns a string representation of the game data.
+     *
+     * @return The string representation.
      */
     @Override
     public String toString() {

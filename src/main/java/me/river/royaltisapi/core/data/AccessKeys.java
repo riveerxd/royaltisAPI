@@ -15,40 +15,40 @@ public class AccessKeys {
     private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/royaltis";
 
     /**
-     * Retrieves the database driver class from the environment variable "royaltis_db_driver".
+     * Retrieves the database driver class from the environment variable "ROYALTIS_DB_DRIVER".
      * If the variable is not set, returns the default driver class.
      *
      * @return the database driver class
      */
     public String getDriverClass() {
-        String driver = System.getenv("royaltis_db_driver");
+        String driver = System.getenv("ROYALTIS_DB_DRIVER");
         logger.info("Database driver class requested, using: {}", driver != null ? driver : DEFAULT_DRIVER);
         return driver != null ? driver : DEFAULT_DRIVER;
     }
 
     /**
-     * Retrieves the database URL from the environment variable "royaltis_db_url".
+     * Retrieves the database URL from the environment variable "ROYALTIS_DB_URL".
      * If the variable is not set, returns the default database URL.
      *
      * @return the database URL
      */
     public String getDatabaseURL() {
-        String url = System.getenv("royaltis_db_url");
+        String url = System.getenv("ROYALTIS_DB_URL");
         logger.info("Database URL requested, using: {}", url != null ? url : DEFAULT_URL);
         return url != null ? url : DEFAULT_URL;
     }
 
     /**
-     * Retrieves the database username from the environment variable "royaltis_db_user".
+     * Retrieves the database username from the environment variable "ROYALTIS_DB_USER".
      *
      * @return the database username
      * @throws NullEnvironmentVariableException if the environment variable is not set
      */
     public String getUsername() throws NullEnvironmentVariableException {
-        String user =  System.getenv("royaltis_db_user");
+        String user =  System.getenv("ROYALTIS_DB_USER");
         if (user == null){
-            logger.error("Environment variable royaltis_db_user is null");
-            throw new NullEnvironmentVariableException("Environment variable royaltis_db_user is null");
+            logger.error("Environment variable ROYALTIS_DB_USER is null");
+            throw new NullEnvironmentVariableException("Environment variable ROYALTIS_DB_USER is null");
         }else{
             logger.info("Database username retrieved successfully.");
             return user;
@@ -56,16 +56,16 @@ public class AccessKeys {
     }
 
     /**
-     * Retrieves the database password from the environment variable "royaltis_db_pass".
+     * Retrieves the database password from the environment variable "ROYALTIS_DB_PASS".
      *
      * @return the database password
      * @throws NullEnvironmentVariableException if the environment variable is not set
      */
     public String getPassword() throws NullEnvironmentVariableException {
-        String pass =  System.getenv("royaltis_db_pass");
+        String pass =  System.getenv("ROYALTIS_DB_PASS");
         if (pass == null){
-            logger.error("Environment variable royaltis_db_pass is null");
-            throw new NullEnvironmentVariableException("Environment variable royaltis_db_pass is null");
+            logger.error("Environment variable ROYALTIS_DB_PASS is null");
+            throw new NullEnvironmentVariableException("Environment variable ROYALTIS_DB_PASS is null");
         }else{
             logger.info("Database password retrieved successfully (value masked for security).");
             return pass;

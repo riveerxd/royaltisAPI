@@ -148,7 +148,7 @@ Set the following environment variables with your specific values:
 
 #### Option 2: Download Pre-built JAR 📥
 
-1. Download the pre-built JAR file from the [releases](#) page. 📦
+1. Download the pre-built JAR file from the [releases](https://github.com/riveerxd/royaltisAPI/releases/tag/Stable) page. 📦
 2. Set the environment variables as described above. 🔧
 3. Run the application from the command line using:
    ```bash

@@ -10,8 +10,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the `Game` class, specifically focusing on the
+ * `moveBordersTowardsMiddle` method.
+ */
 class GameTest {
 
+    /**
+     * Tests the correct behavior of `moveBordersTowardsMiddle` when the
+     * `updateCount` is valid and positive. Verifies that the borders move
+     * closer to the specified middle point by the expected amount.
+     */
     @Test
     void moveBordersTowardsMiddle_validUpdateCount() {
         // Create sample borders
@@ -26,17 +35,21 @@ class GameTest {
         ArrayList<Border> updatedBorders = Game.moveBordersTowardsMiddle(borders, middlePoint, updateCount);
 
         // Assertions
-        assertEquals(2, updatedBorders.size()); // Same number of borders
+        assertEquals(2, updatedBorders.size(), "The number of borders should remain the same");
 
         // Border 1 should move closer to the middle
-        assertEquals(42.0, updatedBorders.get(0).coords().latitude());
-        assertEquals(7.0, updatedBorders.get(0).coords().longitude());
+        assertEquals(42.0, updatedBorders.get(0).coords().latitude(), "Border 1 latitude is incorrect");
+        assertEquals(7.0, updatedBorders.get(0).coords().longitude(), "Border 1 longitude is incorrect");
 
         // Border 2 should also move closer to the middle
-        assertEquals(-22.0, updatedBorders.get(1).coords().latitude());
-        assertEquals(-17.0, updatedBorders.get(1).coords().longitude());
+        assertEquals(-22.0, updatedBorders.get(1).coords().latitude(), "Border 2 latitude is incorrect");
+        assertEquals(-17.0, updatedBorders.get(1).coords().longitude(), "Border 2 longitude is incorrect");
     }
 
+    /**
+     * Tests the behavior when `updateCount` is zero. Expects the borders
+     * to remain unchanged in this case.
+     */
     @Test
     void moveBordersTowardsMiddle_zeroUpdateCount() {
         ArrayList<Border> borders = new ArrayList<>(List.of(
@@ -49,9 +62,13 @@ class GameTest {
         ArrayList<Border> updatedBorders = Game.moveBordersTowardsMiddle(borders, middlePoint, updateCount);
 
         // The borders should not have changed
-        assertEquals(borders, updatedBorders);
+        assertEquals(borders, updatedBorders, "Borders should be unchanged when updateCount is zero");
     }
 
+    /**
+     * Checks the scenario where `updateCount` is negative.
+     * Like the zero case, expects no changes to the borders.
+     */
     @Test
     void moveBordersTowardsMiddle_negativeUpdateCount() {
         ArrayList<Border> borders = new ArrayList<>(List.of(
@@ -64,11 +81,6 @@ class GameTest {
         ArrayList<Border> updatedBorders = Game.moveBordersTowardsMiddle(borders, middlePoint, updateCount);
 
         // The borders should not have changed
-        assertEquals(borders, updatedBorders);
+        assertEquals(borders, updatedBorders, "Borders should be unchanged when updateCount is negative");
     }
-
-    // Add more tests to cover different scenarios, such as:
-    // - Borders already at the middle point
-    // - Borders very close to the middle point
-    // - A large number of borders
 }

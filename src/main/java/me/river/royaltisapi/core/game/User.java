@@ -8,44 +8,49 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Represents a user.
+ * Represents a user in the game.
  */
 public class User {
     /**
-     * The username.
+     * The username of the user.
      */
     private String username;
+
     /**
-     * The password.
+     * The password of the user (transient to avoid serialization).
      */
     transient private String password;
+
     /**
-     * The email.
+     * The email of the user.
      */
     private String email;
+
     /**
-     * The socket session id.
+     * The unique identifier for the user's socket session.
      */
     private UUID socketSessionId;
+
     /**
-     * The rank.
+     * The rank of the user in the game.
      */
     private Rank rank;
+
     /**
-     * The SocketIO client.
+     * The SocketIO client associated with the user (transient to avoid serialization).
      */
     transient private SocketIOClient client;
 
     /**
-     * The user coordinates
+     * The coordinates of the user in the game.
      */
     private Coordinates coordinates;
 
     /**
-     * Instantiates a new User.
+     * Constructs a new User object with the given username and password.
      *
-     * @param username the username
-     * @param password the password
+     * @param username The username of the user.
+     * @param password The password of the user.
      */
     public User(String username, String password) {
         this.username = username;
@@ -53,10 +58,10 @@ public class User {
     }
 
     /**
-     * Instantiates a new User.
+     * Constructs a new User object with the given SocketIO client and rank.
      *
-     * @param client the client
-     * @param rank   the rank
+     * @param client The SocketIO client associated with the user.
+     * @param rank   The rank of the user in the game.
      */
     public User(SocketIOClient client, Rank rank) {
         this.rank = rank;
@@ -64,19 +69,20 @@ public class User {
     }
 
     /**
-     * Instantiates a new User.
+     * Constructs a new User object with the given SocketIO client.
      *
-     * @param client the client
+     * @param client The SocketIO client associated with the user.
      */
     public User(SocketIOClient client) {
         this.client = client;
     }
 
     /**
-     * User equals.
+     * Checks if this User object is equal to another object.
+     * Two users are considered equal if they have the same socket session ID.
      *
-     * @param o the object
-     * @return equals or not
+     * @param o The object to compare to.
+     * @return true if the objects are equal, false otherwise.
      */
     @Override
     public boolean equals(Object o) {
@@ -87,27 +93,10 @@ public class User {
     }
 
     /**
-     * Gets client.
+     * Returns the hash code of this User object.
+     * The hash code is based on the socket session ID.
      *
-     * @return the client
-     */
-    public SocketIOClient getClient() {
-        return client;
-    }
-
-    /**
-     * Sets client.
-     *
-     * @param client the client
-     */
-    public void setClient(SocketIOClient client) {
-        this.client = client;
-    }
-
-    /**
-     * User Hash code.
-     *
-     * @return hash code
+     * @return The hash code.
      */
     @Override
     public int hashCode() {
@@ -115,90 +104,108 @@ public class User {
     }
 
     /**
-     * Sets rank.
+     * Gets the SocketIO client associated with this user.
      *
-     * @param rank the rank
+     * @return The SocketIO client.
+     */
+    public SocketIOClient getClient() {
+        return client;
+    }
+
+    /**
+     * Sets the SocketIO client associated with this user.
+     *
+     * @param client The SocketIO client to set.
+     */
+    public void setClient(SocketIOClient client) {
+        this.client = client;
+    }
+
+    /**
+     * Sets the rank of this user.
+     *
+     * @param rank The rank to set.
      */
     public void setRank(Rank rank) {
         this.rank = rank;
     }
 
     /**
-     * Gets socket session id.
+     * Gets the socket session ID of this user.
      *
-     * @return the socket session id
+     * @return The socket session ID.
      */
     public UUID getSocketSessionId() {
         return client.getSessionId();
     }
 
     /**
-     * Sets socket session id.
+     * Sets the socket session ID of this user.
      *
-     * @param socketSessionId the socket session id
+     * @param socketSessionId The socket session ID to set.
      */
     public void setSocketSessionId(UUID socketSessionId) {
         this.socketSessionId = socketSessionId;
     }
 
     /**
-     * Gets user coordinates
+     * Gets the coordinates of the user.
      *
-     * @return the user coordinates
+     * @return The coordinates.
      */
     public Coordinates getCoordinates() {
         return coordinates;
     }
 
     /**
-     * Sets user coordinates
+     * Sets the coordinates of the user.
      *
-     * @param coordinates the coordinates
+     * @param coordinates The coordinates to set.
      */
     public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
 
     /**
-     * Is admin boolean.
+     * Checks if the user is an admin.
      *
-     * @return if the user is an admin or not
+     * @return True if the user is an admin, false otherwise.
      */
     public boolean isAdmin() {
         return rank == Rank.ADMIN;
     }
 
     /**
-     * Gets username.
+     * Gets the username of the user.
      *
-     * @return the username
+     * @return The username.
      */
     public String getUsername() {
         return username;
     }
 
     /**
-     * Gets password.
+     * Gets the password of the user.
      *
-     * @return the password
+     * @return The password.
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Gets email.
+     * Gets the email of the user.
      *
-     * @return the email
+     * @return The email.
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * User to string.
+     * Returns a string representation of the user.
      *
-     * @return the string
+     * @return The string representation.
      */
     @Override
     public String toString() {

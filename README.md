@@ -130,6 +130,10 @@ CREATE TABLE Users (
     password VARCHAR(255) NOT NULL 
 );
 ```
+3. The database structure should look like this:
+
+![Untitled(1)(1)](https://github.com/riveerxd/royaltisAPI/assets/132168494/93b56b0a-3bf8-4b51-a622-cbedacb5f7fa)
+
 
 ### Environment Variables 🔧
 

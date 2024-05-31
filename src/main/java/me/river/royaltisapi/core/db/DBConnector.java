@@ -20,7 +20,7 @@ public class DBConnector {
      */
     public static Connection getConnection() throws SQLException, ClassNotFoundException, NullEnvironmentVariableException {
         AccessKeys accessKeys = new AccessKeys();
-        Class.forName(accessKeys.getDRIVER_CLASS());
-        return DriverManager.getConnection(accessKeys.getDATABASE_URL(), accessKeys.getUSERNAME(), accessKeys.getPASSWORD());
+        Class.forName(accessKeys.getDriverClass());
+        return DriverManager.getConnection(accessKeys.getDatabaseURL(), accessKeys.getUsername(), accessKeys.getPassword());
     }
 }

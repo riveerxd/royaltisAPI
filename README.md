@@ -1,4 +1,4 @@
-# 🔌 Royaltis API: Backend for Real-Time Multiplayer Game Royaltis 🚀
+# Royaltis API: Backend for Real-Time Multiplayer Game Royaltis 🚀
 
 ## Overview 📝
 

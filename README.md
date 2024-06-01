@@ -29,7 +29,7 @@ The Royaltis API is a robust and customizable backend infrastructure designed sp
 The Royaltis API is engineered for adaptability. Key configurations are managed through environment variables, granting you the flexibility to tailor the system to your specific needs:
 
 - **Database Configuration:** 💽
-  - `royaltis_db_driver`, `royaltis_db_url`, `royaltis_db_user`, `royaltis_db_pass`: These environment variables control the database connection, simplifying the process of switching between different database providers or instances.
+  - `ROYALTIS_DB_DRIVER`, `ROYALTIS_DB_URL`, `ROYALTIS_DB_USER`, `ROYALTIS_DB_PASS`: These environment variables control the database connection, simplifying the process of switching between different database providers or instances.
 
 ## 🏗️ Design and Implementation 🏗️
 
@@ -139,7 +139,7 @@ CREATE TABLE Users (
 
 Set the following environment variables with your specific values:
 
-- `royaltis_db_driver`, `royaltis_db_url`, `royaltis_db_user`, `royaltis_db_pass`: Configure your database connection 💽
+-`ROYALTIS_DB_DRIVER`, `ROYALTIS_DB_URL`, `ROYALTIS_DB_USER`, `ROYALTIS_DB_PASS`: Configure your database connection 💽
 - Optionally, you can customize `socketHost` and `socketPort` in `Config.java` to change the Socket.IO server settings ⚙️
 
 ### Building and Running 🛠️

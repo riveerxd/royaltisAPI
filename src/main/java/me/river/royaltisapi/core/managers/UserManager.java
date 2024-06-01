@@ -164,38 +164,44 @@ public class UserManager {
         try {
             String token = client.getHandshakeData().getHttpHeaders().get("Authorization");
             // Check if the user is an admin using their token
-            if (LoginCheck.checkLoginToken(token)) {
-                logger.info("Authorized admin connected with session ID: {}", client.getSessionId());
+            if (token != null) {
+                if (LoginCheck.checkLoginToken(token)){
+                    logger.info("Authorized admin connected with session ID: {}", client.getSessionId());
 
-                // Create a user object and set its rank to ADMIN
-                User user = TokenManager.getUserFromToken(token);
-                user.setRank(Rank.ADMIN);
-                user.setSocketSessionId(client.getSessionId());
-                user.setClient(client);
-
-                try {
-                    // Add the user to the system and connect them to their lobby
-                    users.add(user);
-                    String lobbyCodeHeader = client.getHandshakeData().getHttpHeaders().get("X-LobbyCode");
-                    logger.debug("Admin joining lobby with code: {}", lobbyCodeHeader);
-                    lobbyManager.connectToLobby(user, new LobbyCode(lobbyCodeHeader));
-                } catch (RuntimeException re) {
-                    // Handle invalid lobby code provided by admin
-                    logger.error("Invalid lobby code for admin: {}", re.getMessage());
-                    client.disconnect();
-                } finally {
-                    // Broadcast an update about the player list after the admin's connection
-                    logger.debug("Broadcasting player update after admin connection.");
-                    broadcastOperations.sendEvent("playerUpdate", gson.toJson(users));
+                    // Create a user object and set its rank to ADMIN
+                    User user = TokenManager.getUserFromToken(token);
+                    user.setRank(Rank.ADMIN);
+                    user.setSocketSessionId(client.getSessionId());
+                    user.setClient(client);
 
                     try {
-                        // Send removed items to the admin
-                        client.sendEvent("removed_items", gson.toJson(lobbyManager.getLobbyByClient(client).getRemovedItems()));
-                        logger.debug("Sent removed items to admin with session ID: {}", client.getSessionId());
-                    } catch (LobbyNotFoundException lnfe) {
-                        logger.error("Error sending removed items to admin: {}", lnfe.getMessage());
+                        // Add the user to the system and connect them to their lobby
+                        users.add(user);
+                        String lobbyCodeHeader = client.getHandshakeData().getHttpHeaders().get("X-LobbyCode");
+                        logger.debug("Admin joining lobby with code: {}", lobbyCodeHeader);
+                        lobbyManager.connectToLobby(user, new LobbyCode(lobbyCodeHeader));
+                    } catch (RuntimeException re) {
+                        // Handle invalid lobby code provided by admin
+                        logger.error("Invalid lobby code for admin: {}", re.getMessage());
+                        client.disconnect();
+                    } finally {
+                        // Broadcast an update about the player list after the admin's connection
+                        logger.debug("Broadcasting player update after admin connection.");
+                        broadcastOperations.sendEvent("playerUpdate", gson.toJson(users));
+
+                        try {
+                            // Send removed items to the admin
+                            client.sendEvent("removed_items", gson.toJson(lobbyManager.getLobbyByClient(client).getRemovedItems()));
+                            logger.debug("Sent removed items to admin with session ID: {}", client.getSessionId());
+                        } catch (LobbyNotFoundException lnfe) {
+                            logger.error("Error sending removed items to admin: {}", lnfe.getMessage());
+                        }
                     }
+                }else{
+                    logger.warn("Unauthorized admin connected with session ID: {}", client.getSessionId());
+                    client.disconnect();
                 }
+
             } else {
                 // Handle regular user connection
                 try {

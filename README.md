@@ -1,10 +1,10 @@
-# Royaltis API: Backend for Real-Time Multiplayer Game Royaltis 🚀
+# Royaltis API: Backend for Real-Time Multiplayer Game [Royaltis](https://github.com/riveerxd/royaltis_frontend) 🚀
 
-## Overview 📝
+## 📝 Overview 📝
 
 The Royaltis API is a robust and customizable backend infrastructure designed specifically for real-time multiplayer games, particularly those inspired by the battle royale genre. This Java Spring Boot application, enhanced with Socket.IO, delivers a comprehensive solution for game data management, user authentication, lobby creation, and real-time game updates.
 
-## Key Features ✨
+## ✨ Features ✨
 
 - **Real-Time Gameplay:** ⚡ Utilizes Socket.IO for seamless, low-latency communication, ensuring a smooth and responsive multiplayer experience.
 - **Flexible Game Data Management:** 💾
@@ -24,14 +24,14 @@ The Royaltis API is a robust and customizable backend infrastructure designed sp
 - **Customizable Game Logic:** ⚙️
   - The `Game` class handles the core game logic, primarily the border shrinking mechanism. This can be readily modified to accommodate diverse rules or game variations, allowing for unique gameplay experiences.
 
-## High Customizability Through Environment Variables 🔧
+## 🔧 High Customizability Through Environment Variables 🔧
 
 The Royaltis API is engineered for adaptability. Key configurations are managed through environment variables, granting you the flexibility to tailor the system to your specific needs:
 
 - **Database Configuration:** 💽
   - `royaltis_db_driver`, `royaltis_db_url`, `royaltis_db_user`, `royaltis_db_pass`: These environment variables control the database connection, simplifying the process of switching between different database providers or instances.
 
-## Design and Implementation 🏗️
+## 🏗️ Design and Implementation 🏗️
 
 ### Project Structure 📂
 
@@ -61,7 +61,7 @@ The Royaltis API is engineered for adaptability. Key configurations are managed 
 - **Socket.IO Integration:** 🌐
   - `SocketIOServer` and `Config`: Set up the Socket.IO server, define event handlers for actions like item deletion, location updates, user connections, and disconnections.
 
-## Workflow 🔄
+## 🔄 Workflow 🔄
 
 1. **Server Startup:** The Socket.IO server is initialized, and listens for client connections.
 2. **Game Data:** Game data, including maps, loot box locations, and items, is either pre-loaded or uploaded via API calls.
@@ -71,7 +71,7 @@ The Royaltis API is engineered for adaptability. Key configurations are managed 
 6. **Gameplay:** Players move within the game world, interact with items, and their actions are reflected in real-time for all participants. The server continuously maintains a synchronized game state for all clients.
 7. **Game End:** The game concludes when the borders close, determining the winner based on the game's rules.
 
-## Setup Instructions 🛠️
+## 🛠️ Setup Instructions 🛠️
 
 ### Prerequisites
 
@@ -159,7 +159,3 @@ Set the following environment variables with your specific values:
    java -jar royaltis-api.jar
    ```
 4. The REST API server will start listening on port 8082, and the Socket.IO server will start listening on port 9090. 📡
-
-## Conclusion 🎉
-
-The Royaltis API provides a solid foundation for running real-time multiplayer games, offering flexibility, scalability, and a focus on customization. Its modular structure and use of proven technologies like Java Spring Boot and Socket.IO make it a maintainable and extensible solution for your game's backend needs.

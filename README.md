@@ -75,7 +75,7 @@ The Royaltis API is engineered for adaptability. Key configurations are managed 
 
 ### Prerequisites
 
-- Java JDK 8 or newer ☕
+- Java JDK 17 ☕
 - MySQL database 🛢️
 - Basic understanding of Spring Boot and Socket.IO 🧠
 
